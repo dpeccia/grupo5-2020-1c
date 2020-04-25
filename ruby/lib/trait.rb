@@ -29,12 +29,12 @@ class Trait
 end
 
 class Class
-  def uses un_trait
-    @@un_trait = un_trait
-  end
-  def method_missing(m, *args, &block)
-    @@un_trait.send(m,*args,&block) unless @@un_trait.nil?
-    super()
+  def uses(trait)
+    trait.singleton_methods(false).each { |met|
+      unless(self.instance_methods(false).include? met)
+        self.define_method(met, &trait.singleton_method(met))
+      end  
+    }
   end
 end
 
