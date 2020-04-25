@@ -1,3 +1,3 @@
 require 'rspec'
 
-require_relative '../lib/../lib/trait_2'
+require_relative '../lib/trait'

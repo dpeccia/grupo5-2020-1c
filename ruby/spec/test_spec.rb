@@ -1,9 +1,38 @@
-describe Prueba do
-  let(:trait) { Trait.new }
-
-  describe '#materia' do
-    it 'debería pasar este test' do
-      expect(prueba.materia).to be :tadp
+require_relative '../lib/trait'
+describe Trait do
+  before do
+    Trait.define do
+      name :MiTrait
+      method :metodo1 do
+        "Hola"
+      end
+      method :metodo2 do |un_numero|
+        un_numero * 0 + 42
+      end
     end
+      Trait.define do
+        name :OtroTrait
+        method :metodo3 do
+          "Hola"
+        end
+        method :metodo4 do |un_numero|
+          un_numero * 0 + 42
+        end
+      end
+  end
+
+  describe '#define crea el trait con nombre' do
+    it 'crea trait con nombre y metodos' do
+      expect(MiTrait.nombre).to be :MiTrait
+    end
+  end
+  describe 'tiene los metodos' do
+    it 'tiene los metodos' do
+      expect(MiTrait.methods(false)).to include[:metodo1,:metodo2]
+    end
+  end
+  describe '#+ suma bien los traits'
+  it 'delega bien el metodo si no lo tiene' do
+    MiTrait.
   end
 end
