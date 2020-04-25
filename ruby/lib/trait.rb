@@ -1,10 +1,6 @@
 class Trait
   attr_accessor :nombre,:metodos,:metodos_repetidos
-  def self.define(iniciadores)
-    @nombre = iniciadores.match(/(?<=name :).+/)
-    nombre_metodos = iniciadores.scan(/(?<=method :).+(?=.do)/)
-    create_method(hash[:method],block)
-  end
+
   def create_method(name, &block)
     self.class.send(:define_method, name, &block)
   end
