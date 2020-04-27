@@ -1,12 +1,14 @@
 class Trait
   attr_reader :nombre
-
+  attr_accessor :bloque
+  @@id = 1
   def initialize(&bloque)
     self.instance_eval(&bloque)
   end
 
   def self.define(&bloque)
     nuevoTrait = Trait.new(&bloque)
+    nuevoTrait.bloque = bloque
     Object.const_set(nuevoTrait.nombre,nuevoTrait)
   end
 
@@ -19,15 +21,18 @@ class Trait
     define_singleton_method(simbolo, &bloque)
   end
   def + otro_trait
+    nuevo_trait = Trait.new(&self.bloque)
+    Object.const_set("NuevoTrait#{@@id}".to_sym,nuevo_trait)
+    @@id += 1
     error = proc {raise 'Metodo Repetido'}
     otro_trait.singleton_methods(false).each do |m|
-      if self.methods(false).include? m
-        self.define_singleton_method(m, &error) 
+      if nuevo_trait.methods(false).include? m
+        nuevo_trait.define_singleton_method(m, &error) 
         next
       end
-      self.define_singleton_method(m, &otro_trait.singleton_method(m))
+      nuevo_trait.define_singleton_method(m, &otro_trait.singleton_method(m))
     end
-    return self
+    return nuevo_trait
   end
   #def method_missing(m, *args, &block)
    # @otro_trait.send(m,*args,&block)
