@@ -1,4 +1,5 @@
 require_relative '../lib/trait'
+
 describe Trait do
   before do
     Trait.define do
@@ -32,7 +33,7 @@ describe Trait do
     end
   end
   describe '#+ suma bien los traits'
-  it 'delega bien el metodo si no lo tiene' do
-    MiTrait.
-  end
+    it 'delega bien el metodo si no lo tiene' do
+      #MiTrait.
+    end
 end
