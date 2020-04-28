@@ -12,14 +12,15 @@ describe Trait do
     end
       Trait.define do
         name :OtroTrait
-        method :metodo3 do
-          "Hola"
+        method :metodo1 do
+          "Chau"
         end
         method :metodo4 do |un_numero|
           un_numero * 0 + 42
         end
       end
-    class A uses MiTrait + MiOtroTrait
+    class A
+      uses MiTrait + OtroTrait
     end
   end
 
@@ -27,14 +28,16 @@ describe Trait do
     it 'crea trait con nombre y metodos' do
       expect(MiTrait.nombre).to be :MiTrait
     end
-  end
-  describe 'tiene los metodos' do
     it 'tiene los metodos' do
-      expect(MiTrait.methods(false)).to include[:metodo1,:metodo2]
+      expect(MiTrait.methods(false)).to eq [:metodo1,:metodo2]
     end
   end
-  describe '#+ suma bien los traits'
-  it 'la clase tiene todos los metodos' do
-    A.methods(false)
-  end
+  describe '#+'
+    it 'la clase tiene todos los metodos' do
+      expect(A.new.methods).to include :metodo1,:metodo2,:metodo4
+    end
+    it 'la clase tira error si tiene metodos repetidos' do
+      expect { A.new.metodo1 }.to raise_error("Metodo Repetido")
+    end
+
 end
