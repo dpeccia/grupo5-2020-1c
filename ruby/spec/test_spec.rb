@@ -39,6 +39,7 @@ describe Trait do
       expect(MiTrait.methods(false)).to eq [:metodo1,:metodo2]
     end
   end
+
   describe '#+'
     it 'la clase tiene todos los metodos' do
       expect(A.new.methods).to include :metodo1,:metodo2,:metodo4
