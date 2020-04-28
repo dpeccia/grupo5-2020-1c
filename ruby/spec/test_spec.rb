@@ -1,4 +1,5 @@
 require_relative '../lib/trait'
+
 describe Trait do
   before do
     Trait.define do
