@@ -75,8 +75,4 @@ end
 
 A.new.metodo1
 A.new.metodo3
-<<<<<<< HEAD
 A.new.metodo2 2
-=======
-A.new.metodo2 2
->>>>>>> d27962834ac11edceb80a1726d0f38a8476856b9
