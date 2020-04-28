@@ -34,7 +34,7 @@ class Trait
 
   def -(simbolo)
     nuevo_trait = self.clone
-    errorDeMetodo = proc {raise 'No contiene el metodo'}
+    errorDeMetodo = proc {raise 'Solo remueve metodos incluidos en su trait'}
     if not nuevo_trait.methods(false).include? simbolo
       errorDeMetodo.call
     else
