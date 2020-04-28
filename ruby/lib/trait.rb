@@ -11,6 +11,16 @@ class Trait
     nuevoTrait.bloque = bloque
     Object.const_set(nuevoTrait.nombre,nuevoTrait)
   end
+  
+  def - simbolo 
+
+    nuevo_trait = Trait.new(&self.bloque)
+
+    nuevo_trait.singleton_class.send :remove_method,simbolo
+
+    return nuevo_trait
+
+  end
 
 
   def name(simbolo)
