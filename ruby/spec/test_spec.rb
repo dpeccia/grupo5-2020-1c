@@ -19,6 +19,8 @@ describe Trait do
           un_numero * 0 + 42
         end
       end
+    class A uses MiTrait + MiOtroTrait
+    end
   end
 
   describe '#define crea el trait con nombre' do
@@ -32,7 +34,7 @@ describe Trait do
     end
   end
   describe '#+ suma bien los traits'
-  it 'delega bien el metodo si no lo tiene' do
-    MiTrait.
+  it 'la clase tiene todos los metodos' do
+    A.methods(false)
   end
 end
