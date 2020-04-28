@@ -41,6 +41,7 @@ class Trait
       nuevo_trait.singleton_class.send :remove_method,simbolo
     end
   end
+end
 
 
 
@@ -49,7 +50,7 @@ class Class
     trait.singleton_methods(false).each { |met|
       unless self.instance_methods(false).include? met
         self.define_method(met, &trait.singleton_method(met))
-      end  
+      end
     }
   end
 end
