@@ -29,6 +29,7 @@ describe Trait do
     class B
       uses MiTrait - :metodo2
     end
+
     class ConAlias
       uses MiTrait << (:metodo1 >> :saludo)
     end
@@ -52,9 +53,10 @@ describe Trait do
     end
   describe 'Tests de Resta' do
     it 'Se remueve el metodo especificado' do
-      expect(B.new.methods(false)).to eq [:metodo1]
+      expect(B.new.methods).to include :metodo1
     end
   end
+
     describe '#<< metodo renombrar' do
       it 'clase deberia tener los metodos viejos y el renombrado' do
         ConAlias.new.should respond_to? :metodo1 and ConAlias.new.should respond_to? :saludo
