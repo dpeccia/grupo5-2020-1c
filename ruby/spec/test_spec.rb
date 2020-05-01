@@ -60,7 +60,7 @@ describe Trait do
 
     describe '#<< metodo renombrar' do
       it 'clase deberia tener los metodos viejos y el renombrado' do
-        ConAlias.new.should respond_to? :metodo1 and ConAlias.new.should respond_to? :saludo
+        expect(ConAlias.new).to respond_to :metodo1 and expect(ConAlias.new).to respond_to :saludo
       end
     end
   end
