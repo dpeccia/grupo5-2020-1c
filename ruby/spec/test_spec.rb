@@ -1,6 +1,7 @@
 require_relative '../lib/trait'
 
 describe Trait do
+
   before do
     Trait.define do
       name :MiTrait
@@ -20,8 +21,13 @@ describe Trait do
           un_numero * 0 + 42
         end
       end
+
     class A
       uses MiTrait + OtroTrait
+    end
+
+    class B
+      uses MiTrait - :metodo2
     end
   end
 
@@ -40,4 +46,11 @@ describe Trait do
     it 'la clase tira error si tiene metodos repetidos' do
       expect { A.new.metodo1 }.to raise_error("Metodo Repetido")
     end
-end
+
+  describe 'Tests de Resta' do
+    it 'Se remueve el metodo especificado' do
+      expect(B.new.methods(false)).to eq [:metodo1]
+    end
+  end
+
+  #Test que devuelve error si se saca un metodo que no esta

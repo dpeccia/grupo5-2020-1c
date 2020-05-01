@@ -34,8 +34,26 @@ class Trait
 
   def -(simbolo)
     nuevo_trait = self.clone
-    nuevo_trait.singleton_class.send :remove_method,simbolo
+    errorDeMetodo = proc {raise 'Solo remueve metodos incluidos en su trait'}
+    unless nuevo_trait.methods(false).include? simbolo
+      errorDeMetodo.call
+    else
+      nuevo_trait.singleton_class.send :remove_method,simbolo
+    end
     nuevo_trait
+  end
+
+  def << un_hash
+    nuevo_trait = self.clone
+    nuevo_trait.method(un_hash[:nuevo_metodo],&nuevo_trait.singleton_method(un_hash[:metodo_copiado]))
+    nuevo_trait
+  end
+
+end
+
+class Symbol
+  def >> un_simbolo
+    {:nuevo_metodo => un_simbolo, :metodo_copiado => self}
   end
 end
 
@@ -44,7 +62,7 @@ class Class
     trait.singleton_methods(false).each { |met|
       unless self.instance_methods(false).include? met
         self.define_method(met, &trait.singleton_method(met))
-      end  
+      end
     }
   end
 end
