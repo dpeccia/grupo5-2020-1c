@@ -29,6 +29,9 @@ describe Trait do
     class B
       uses MiTrait - :metodo2
     end
+    class ConAlias
+      uses MiTrait << (:metodo1 >> :saludo)
+    end
   end
 
   describe '#define crea el trait con nombre' do
@@ -46,11 +49,16 @@ describe Trait do
     it 'la clase tira error si tiene metodos repetidos' do
       expect { A.new.metodo1 }.to raise_error("Metodo Repetido")
     end
-
+    end
   describe 'Tests de Resta' do
     it 'Se remueve el metodo especificado' do
       expect(B.new.methods(false)).to eq [:metodo1]
     end
   end
-
+    describe '#<< metodo renombrar' do
+      it 'clase deberia tener los metodos viejos y el renombrado' do
+        ConAlias.new.should respond_to? :metodo1 and ConAlias.new.should respond_to? :saludo
+      end
+    end
+  end
   #Test que devuelve error si se saca un metodo que no esta
