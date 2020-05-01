@@ -34,11 +34,11 @@ class Trait
 
   def -(simbolo)
     nuevo_trait = self.clone
-    errorDeMetodo = proc {raise 'Solo remueve metodos incluidos en su trait'}
-    unless nuevo_trait.methods(false).include? simbolo
-      errorDeMetodo.call
-    else
+    error_de_metodo = proc {raise 'Solo remueve metodos incluidos en su trait'}
+    if nuevo_trait.methods(false).include? simbolo
       nuevo_trait.singleton_class.send :remove_method,simbolo
+    else
+      error_de_metodo.call
     end
     nuevo_trait
   end
