@@ -2,7 +2,7 @@ require_relative '../lib/trait'
 
 describe Trait do
 
-  before do
+  before :all do
     Trait.define do
       name :MiTrait
       method :metodo1 do
@@ -12,15 +12,16 @@ describe Trait do
         un_numero * 0 + 42
       end
     end
-      Trait.define do
-        name :OtroTrait
-        method :metodo1 do
-          "Chau"
-        end
-        method :metodo4 do |un_numero|
-          un_numero * 0 + 42
-        end
+
+    Trait.define do
+      name :OtroTrait
+      method :metodo1 do
+        "Chau"
       end
+      method :metodo4 do |un_numero|
+        un_numero * 0 + 42
+      end
+    end
 
     class A
       uses MiTrait + OtroTrait
@@ -40,7 +41,7 @@ describe Trait do
       expect(MiTrait.nombre).to be :MiTrait
     end
     it 'tiene los metodos' do
-      expect(MiTrait.methods(false)).to eq [:metodo1,:metodo2]
+      expect(MiTrait.methods(false).sort).to eq [:metodo1,:metodo2]
     end
   end
   describe '#+' do
