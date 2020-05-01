@@ -33,12 +33,11 @@ describe Trait do
       expect(MiTrait.methods(false)).to eq [:metodo1,:metodo2]
     end
   end
-  describe '#+'
+  describe '#+' do
     it 'la clase tiene todos los metodos' do
       expect(A.new.methods).to include :metodo1,:metodo2,:metodo4
     end
     it 'la clase tira error si tiene metodos repetidos' do
       expect { A.new.metodo1 }.to raise_error("Metodo Repetido")
     end
-
 end
