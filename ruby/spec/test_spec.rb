@@ -6,7 +6,7 @@ describe "Tests de Traits" do
     Trait.define do
       name :MiTrait
       method :metodo1 do
-        "Hola"
+        p "Hola"
       end
       method :metodo2 do |un_numero|
         un_numero * 0 + 42
@@ -16,11 +16,25 @@ describe "Tests de Traits" do
     Trait.define do
       name :OtroTrait
       method :metodo1 do
-        "Chau"
+        p "Chau"
       end
       method :metodo4 do |un_numero|
         un_numero * 0 + 42
       end
+      Trait.define do
+        name :MiTrait2
+        method :metodo1 do
+          10
+        end
+      end
+
+      Trait.define do
+        name :OtroTrait2
+        method :metodo1 do
+          20
+        end
+      end
+
     end
 
     class MiClase
@@ -37,7 +51,13 @@ describe "Tests de Traits" do
     class B
       uses MiTrait - :metodo2
     end
-
+    condicion = proc do |numero|
+      numero.even?
+    end
+    MiTrait2.estrategia = AplicarPorCondicion.new(&condicion)
+    class C
+      uses MiTrait2 + OtroTrait2
+    end
     #class ConAlias
       #uses MiTrait << (:metodo1 >> :saludo)
       #end
@@ -96,6 +116,29 @@ describe "Tests de Traits" do
     it 'tira error si se trata de renombrar un metodo que no existe' do
       expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_error 'Solo puede renombrar metodos incluidos en el trait'
     end
+  end
+  describe "Resolucion de conflictos" do #TODO ver porque cambia la interfaz de los metodos
+    xit 'la estrategia de orden de aparicion aplica ambos metodos' do
+      MiTrait.estrategia = OrdenDeAparicion.new
+      class C
+        uses MiTrait + OtroTrait
+      end
+      expect(C.new.metodo1).to eq "Hola\n Chau" #TODO Ver de hacer otro test
+    end
+    xit 'should ' do
+      def sumar un_numero
+        1 + un_numero
+      end
+      MiTrait2.estrategia = AplicarFuncion.new(:sumar)
+      class C
+        uses MiTrait2 + OtroTrait2
+      end
+      expect(C.new.metodo1).to eq 30 #TODO ver porque queda nil el metodo
+    end
+    xit 'corta el flujo si cumple condicion ' do
+      expect(C.new.metodo1).to eq 10 #TODO ver porque queda nil el metodo
+    end
+
   end
 
 end

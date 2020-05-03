@@ -1,8 +1,8 @@
 require_relative 'trait_symbol'
-include TraitSymbol
+require_relative 'estrategias'
 class Trait
   attr_reader :nombre
-  attr_accessor :metodos
+  attr_accessor :metodos,:estrategia
   @@metodos_duplicados = proc {raise 'Metodo Repetido'}
   @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
   @@no_existe_metodo =  proc {raise 'Solo puede renombrar metodos incluidos en el trait'}
@@ -30,13 +30,15 @@ class Trait
     nuevo_trait
   end
 
-  def self.sumar_traits(un_trait,otro_trait)
-    metodos = un_trait.metodos.merge(otro_trait.metodos){|key, oldval, newval| @@metodos_duplicados}
-    crear_trait(metodos)
-  end
-
   def +(otro_trait)
-    self.class.sumar_traits(self,otro_trait)
+    metodos = self.metodos.merge(otro_trait.metodos) do |key, oldval, newval|
+      bloque = @@metodos_duplicados
+      unless @estrategia.nil?
+        bloque = @estrategia.aplicar(oldval,newval)
+      end
+      bloque
+    end
+    self.class.crear_trait(metodos)
   end
 
   def -(simbolo)
@@ -46,7 +48,7 @@ class Trait
     end
     self.class.crear_trait(metodos)
   end
-
+  #using TraitSymbol
   def << un_hash
     metodos_trait = self.metodos
     if !metodos_trait.keys.include? un_hash[:metodo_copiado]
@@ -55,6 +57,7 @@ class Trait
     metodos_trait[un_hash[:nuevo_nombre]] = metodos_trait[un_hash[:metodo_copiado]]
     self.class.crear_trait(metodos_trait)
   end
+
 end
 
 class Class
