@@ -34,13 +34,13 @@ describe "Tests de Traits" do
       uses MiTrait + OtroTrait
     end
 
-    class B
-      uses MiTrait - :metodo2
-    end
+    #lass B
+      #uses MiTrait - :metodo2
+      #end
 
-    class ConAlias
-      uses MiTrait << (:metodo1 >> :saludo)
-    end
+    #class ConAlias
+    # uses MiTrait << (:metodo1 >> :saludo)
+    #end
 
   end
 
@@ -52,10 +52,10 @@ describe "Tests de Traits" do
       expect(MiTrait.nombre).to be :MiTrait
     end
     it 'tiene los metodos que le definimos' do
-      expect(MiTrait.methods(false).sort).to eq [:metodo1,:metodo2]
+      expect(MiTrait.metodos.keys).to eq [:metodo1,:metodo2]
     end
     it 'el :metodo2 solo se creo para esa instancia' do
-      expect(MiTrait.singleton_methods).to include :metodo2
+      expect(MiTrait.metodos).to include :metodo2
     end
   end
 
