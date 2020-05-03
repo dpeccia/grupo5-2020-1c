@@ -63,6 +63,9 @@ describe "Tests de Traits" do
     it 'MiClase tiene el :metodo2 de MiTrait' do
       expect(MiClase.instance_methods).to include :metodo2
     end
+    it 'Mi Clase devuelve el metodo'do
+      expect(MiClase.new.metodo2 2).to eq 42
+    end
     it 'no se pisa el metodo que ya tenia la clase' do
       expect(MiClase.new.metodo1).to eq "mundo"
     end

@@ -1,10 +1,12 @@
 class Trait
   attr_reader :nombre
   attr_accessor :metodos
+  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
+  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
 
   def initialize(&bloque)
     @metodos = {}
-    self.instance_eval(&bloque)
+    self.instance_eval(&bloque) unless bloque.nil?
   end
 
   def self.define(&bloque)
@@ -21,7 +23,9 @@ class Trait
   end
 
   def self.sumar_traits(un_trait,otro_trait)
-    return un_trait
+    nuevo_trait = Trait.new
+    nuevo_trait.metodos = un_trait.metodos.merge(otro_trait.metodos){|key, oldval, newval| @@metodos_duplicados}
+    return nuevo_trait
   end
 
   def +(otro_trait)
@@ -30,11 +34,10 @@ class Trait
 
   def -(simbolo)
     nuevo_trait = self.clone
-    error_de_metodo = proc {raise 'Solo remueve metodos incluidos en su trait'}
     if nuevo_trait.methods(false).include? simbolo
       nuevo_trait.singleton_class.send :remove_method,simbolo
     else
-      error_de_metodo.call
+      @@error_metodo_no_incluido.call
     end
     nuevo_trait
   end
@@ -55,10 +58,10 @@ end
 
 class Class
   def uses(trait)
-    trait.singleton_methods(false).each { |met|
-      unless self.instance_methods(false).include? met
-        self.define_method(met, &trait.singleton_method(met))
+    trait.metodos.each do |key,value|
+      unless self.instance_methods(false).include? key
+        self.define_method(key, &value)
       end
-    }
+    end
   end
 end
