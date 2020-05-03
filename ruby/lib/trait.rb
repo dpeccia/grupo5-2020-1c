@@ -1,3 +1,5 @@
+require_relative 'trait_symbol'
+include TraitSymbol
 class Trait
   attr_reader :nombre
   attr_accessor :metodos
@@ -38,8 +40,8 @@ class Trait
   end
 
   def -(simbolo)
-    metodos = self.metodos
-    if metodos.delete(simbolo).nil?
+    metodos = self.metodos.select{|m| m!= simbolo }
+    if metodos.length == self.metodos.length
       @@error_metodo_no_incluido.call
     end
     self.class.crear_trait(metodos)
@@ -52,12 +54,6 @@ class Trait
     end
     metodos_trait[un_hash[:nuevo_nombre]] = metodos_trait[un_hash[:metodo_copiado]]
     self.class.crear_trait(metodos_trait)
-  end
-end
-
-class Symbol
-  def >> un_simbolo
-    {:nuevo_nombre => un_simbolo, :metodo_copiado => self}
   end
 end
 

@@ -38,9 +38,9 @@ describe "Tests de Traits" do
       uses MiTrait - :metodo2
     end
 
-    class ConAlias
-     uses MiTrait << (:metodo1 >> :saludo)
-    end
+    #class ConAlias
+      #uses MiTrait << (:metodo1 >> :saludo)
+      #end
 
   end
 
