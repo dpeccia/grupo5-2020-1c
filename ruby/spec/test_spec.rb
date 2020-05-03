@@ -34,13 +34,13 @@ describe "Tests de Traits" do
       uses MiTrait + OtroTrait
     end
 
-    #lass B
-      #uses MiTrait - :metodo2
-      #end
+    class B
+      uses MiTrait - :metodo2
+    end
 
-    #class ConAlias
-    # uses MiTrait << (:metodo1 >> :saludo)
-    #end
+    class ConAlias
+     uses MiTrait << (:metodo1 >> :saludo)
+    end
 
   end
 
@@ -94,7 +94,7 @@ describe "Tests de Traits" do
       expect(ConAlias.new).to respond_to :metodo1 and expect(ConAlias.new).to respond_to :saludo
     end
     it 'tira error si se trata de renombrar un metodo que no existe' do
-      expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_exception NameError
+      expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_error 'Solo puede renombrar metodos incluidos en el trait'
     end
   end
 
