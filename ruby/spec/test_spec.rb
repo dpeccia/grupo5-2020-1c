@@ -6,7 +6,7 @@ describe "Tests de Traits" do
     Trait.define do
       name :MiTrait
       method :metodo1 do
-        p "Hola"
+        "Hola"
       end
       method :metodo2 do |un_numero|
         un_numero * 0 + 42
@@ -23,10 +23,10 @@ describe "Tests de Traits" do
     Trait.define do
       name :MiOtroTrait
       method :metodo1 do
-        p "Chau"
+        "Chau"
       end
       method :metodo3 do
-        "zaraza"
+        20
       end
     end
 
@@ -36,7 +36,7 @@ describe "Tests de Traits" do
         "chau"
       end
       method :metodo3 do
-        "zarazaaaa"
+        10
       end
     end
 
@@ -96,14 +96,25 @@ describe "Tests de Traits" do
     end
   end
 
-  describe "Resolucion de conflictos" do #TODO ver porque cambia la interfaz de los metodos
+  describe "Resolucion de conflictos" do
     it 'la estrategia de orden de aparicion aplica ambos metodos' do
       class C
-        uses (MiTrait + MiOtroTrait) & OrdenDeAparicion
+        uses (MiTrait + MiOtroTrait) & OrdenDeAparicion.new
       end
-      expect(C.new.metodo1).to eq "Hola" && "Chau" #TODO Ver de hacer otro test
+      expect(C.new.metodo1).to eq "Hola" && "Chau"
     end
-
+    it 'la estrategia de aplicar funcion ejecuta ambas como un fold' do
+      class D
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarFuncion.new(:*)
+      end
+      expect(D.new.metodo3).to eq 200
+    end
+    it 'la estrategia de aplicar condicion corta el flujo si la cumple' do
+      class E
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion.new(proc {|m| m>8})
+      end
+      expect(E.new.metodo3).to eq 20
+    end
   end
 
 end
