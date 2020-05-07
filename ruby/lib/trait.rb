@@ -1,13 +1,12 @@
-require_relative 'trait_symbol'
 require_relative 'estrategias'
+require_relative 'metodos'
+
 class Trait
   attr_reader :nombre
-  attr_accessor :metodos,:estrategia
-  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
-  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
-  @@no_existe_metodo =  proc {raise 'Solo puede renombrar metodos incluidos en el trait'}
+  attr_accessor :metodos
+
   def initialize(&bloque)
-    @metodos = {}
+    @metodos = []
     self.instance_eval(&bloque) unless bloque.nil?
   end
 
@@ -21,51 +20,93 @@ class Trait
   end
 
   def method(simbolo, &bloque)
-    @metodos[simbolo] = bloque
-  end
-
-  def self.crear_trait(metodos)
-    nuevo_trait = Trait.new
-    nuevo_trait.metodos = metodos
-    nuevo_trait
+    @metodos << MetodoTrait.new(simbolo, &bloque)
   end
 
   def +(otro_trait)
-    metodos = self.metodos.merge(otro_trait.metodos) do |key, oldval, newval|
-      bloque = @@metodos_duplicados
-      unless @estrategia.nil?
-        bloque = @estrategia.aplicar(oldval,newval)
-      end
-      bloque
-    end
-    self.class.crear_trait(metodos)
+    TraitBuilder.crear_trait(self.metodos) { |builder| builder.sumar(otro_trait) }
   end
 
   def -(simbolo)
-    metodos = self.metodos.select{|m| m!= simbolo }
-    if metodos.length == self.metodos.length
+    TraitBuilder.crear_trait(self.metodos) { |builder| builder.restar(simbolo) }
+  end
+
+  def &(estrategia)
+    TraitBuilder.crear_trait(self.metodos) { |builder| builder.resolver_conflictos(estrategia) }
+  end
+
+end
+
+class TraitBuilder
+  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
+  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
+
+  def self.crear_trait(metodos)
+    builder = new(metodos)
+    yield(builder)
+    builder.trait
+  end
+
+  def initialize(metodos)
+    @trait = Trait.new
+    @trait.metodos = metodos
+  end
+
+  def metodos
+    @trait.metodos
+  end
+
+  def trait
+    @trait
+  end
+
+  def sumar(otro_trait)
+    @trait.metodos = @trait.metodos + otro_trait.metodos
+  end
+
+  def restar(metodo)
+    metodos = @trait.metodos.select{|m| m.nombre != metodo }
+    if metodos.length == trait.metodos.length
       @@error_metodo_no_incluido.call
     end
-    self.class.crear_trait(metodos)
+    @trait.metodos = metodos
   end
-  #using TraitSymbol
-  def << un_hash
-    metodos_trait = self.metodos
-    if !metodos_trait.keys.include? un_hash[:metodo_copiado]
-      @@no_existe_metodo.call
+
+  def resolver_conflictos(estrategia)
+    metodos_no_conflictivos = self.obtener_metodos_no_conflictivos
+    self.obtener_metodos_conflictivos.each do |metodo_conflictivo|
+      metodos_no_conflictivos << estrategia.aplicar(metodo_conflictivo)
     end
-    metodos_trait[un_hash[:nuevo_nombre]] = metodos_trait[un_hash[:metodo_copiado]]
-    self.class.crear_trait(metodos_trait)
+    @trait.metodos = metodos_no_conflictivos
+  end
+
+  def obtener_metodos_conflictivos
+    @trait.metodos.select{|metodo| esta_duplicado(metodo)}
+        .group_by{|m| m.nombre}.map{|m| MetodoConflictivo.new(m[0], [m[1][0], m[1][1]])}
+  end
+
+  def obtener_metodos_no_conflictivos
+    @trait.metodos.select{|metodo| !esta_duplicado(metodo)}
+  end
+
+  def esta_duplicado(metodo)
+    @trait.metodos.map{|m| m.nombre}.count(metodo.nombre) > 1
   end
 
 end
 
 class Class
   def uses(trait)
-    trait.metodos.each do |key,value|
-      unless self.instance_methods(false).include? key
-        self.define_method(key, &value)
+    nombres_metodos = trait.metodos.map {|m| m.nombre}
+    if(nombres_metodos.uniq.length != nombres_metodos.length)
+      raise "Tiene conflictos sin resolver"
+    else
+      trait.metodos.each do |m|
+        unless self.instance_methods(false).include? m.nombre
+          self.define_method(m.nombre, &m.codigo)
+        end
       end
     end
   end
 end
+
