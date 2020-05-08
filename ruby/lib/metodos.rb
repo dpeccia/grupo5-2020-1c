@@ -5,6 +5,10 @@ class MetodoTrait
     @nombre = nombre_metodo
     @codigo = bloque
   end
+
+  def es_mi_nombre? otro_nombre
+    @nombre == otro_nombre
+  end
 end
 
 class MetodoConflictivo

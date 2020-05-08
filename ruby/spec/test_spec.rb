@@ -40,8 +40,8 @@ describe "Tests de Traits" do
       end
     end
 
-    class Conflicto
-      #uses MiTrait + MiOtroTrait
+    class ConAlias
+      uses MiTrait << (:metodo1 >> :saludo)
     end
 
     class Suma
@@ -93,6 +93,15 @@ describe "Tests de Traits" do
     end
     it 'tira error si se remueve un metodo inexistente' do
       expect{class C uses MiTrait - :metodo8 end}.to raise_error "Solo remueve metodos incluidos en su trait"
+    end
+  end
+
+  describe 'Renombrar selectores' do
+    it 'tiene los metodos viejos y el renombrado' do
+      expect(ConAlias.new).to respond_to :metodo1 and expect(ConAlias.new).to respond_to :saludo
+    end
+    it 'tira error si se trata de renombrar un metodo que no existe' do
+      expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_error 'Solo puede renombrar metodos incluidos en el trait'
     end
   end
 
