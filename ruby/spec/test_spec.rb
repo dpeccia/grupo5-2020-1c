@@ -106,6 +106,9 @@ describe "Tests de Traits" do
   end
 
   describe "Resolucion de conflictos" do
+    it 'tira error si no se define estrategia y hay conflictos' do
+      expect{class Rompe uses MiTrait + MiOtroTrait end}.to raise_error 'Tiene conflictos sin resolver'
+    end
     it 'la estrategia de orden de aparicion aplica ambos metodos' do
       class C
         uses (MiTrait + MiOtroTrait) & OrdenDeAparicion.new
