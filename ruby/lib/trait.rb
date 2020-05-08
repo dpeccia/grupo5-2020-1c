@@ -82,10 +82,11 @@ class TraitBuilder
 
   def renombrar(hash)
     metodos_trait = @trait.metodos
+    #p metodos_trait.map{|m| m.nombre}
     if !metodos_trait.map{|m| m.nombre}.include? hash[:metodo_copiado]
       @@no_existe_metodo.call
     end
-    @trait.metodos << MetodoTrait.new(hash[:nuevo_nombre], &metodos_trait.detect{|m| m.es_mi_nombre?}.codigo)
+    @trait.metodos = @trait.metodos + [MetodoTrait.new(hash[:nuevo_nombre], &metodos_trait.detect{|m| m.es_mi_nombre? hash[:metodo_copiado]}.codigo)]
   end
 
   def resolver_conflictos(estrategia)
