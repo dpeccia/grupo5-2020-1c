@@ -5,7 +5,9 @@ require_relative 'symbol_trait'
 class Trait
   attr_reader :nombre
   attr_accessor :metodos
-
+  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
+  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
+  @@no_existe_metodo =  proc {raise 'Solo puede renombrar metodos incluidos en el trait'}
   def initialize(&bloque)
     @metodos = []
     self.instance_eval(&bloque) unless bloque.nil?
@@ -25,91 +27,55 @@ class Trait
   end
 
   def +(otro_trait)
-    TraitBuilder.crear_trait(self.metodos) { |builder| builder.sumar(otro_trait) }
+    nuevos_metodos = @metodos + otro_trait.metodos
+    self.class.crear_trait(nuevos_metodos)
+  end
+
+  def self.crear_trait(metodos)
+    nuevo_trait = Trait.new
+    nuevo_trait.metodos = metodos
+    nuevo_trait
   end
 
   def -(simbolo)
-    TraitBuilder.crear_trait(self.metodos) { |builder| builder.restar(simbolo) }
+    nuevos_metodos = @metodos.select{|m| m.nombre != simbolo }
+    if nuevos_metodos.length == self.metodos.length
+      @@error_metodo_no_incluido.call
+    end
+    self.class.crear_trait(nuevos_metodos)
   end
 
   def <<(hash)
-    TraitBuilder.crear_trait(self.metodos) do |builder|
-      builder.renombrar(hash)
+    nuevos_metodos = self.metodos
+    #p metodos_trait.map{|m| m.nombre}
+    if !nuevos_metodos.map{|m| m.nombre}.include? hash[:metodo_copiado]
+      @@no_existe_metodo.call
     end
+    nuevos_metodos = self.metodos + [MetodoTrait.new(hash[:nuevo_nombre], &nuevos_metodos.detect{|m| m.es_mi_nombre? hash[:metodo_copiado]}.codigo)]
+    self.class.crear_trait(nuevos_metodos)
   end
 
   def &(estrategia)
-    TraitBuilder.crear_trait(self.metodos) { |builder| builder.resolver_conflictos(estrategia) }
-  end
-
-end
-
-class TraitBuilder
-  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
-  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
-  @@no_existe_metodo =  proc {raise 'Solo puede renombrar metodos incluidos en el trait'}
-
-  def self.crear_trait(metodos)
-    builder = new(metodos)
-    yield(builder)
-    builder.trait
-  end
-
-  def initialize(metodos)
-    @trait = Trait.new
-    @trait.metodos = metodos
-  end
-
-  def metodos
-    @trait.metodos
-  end
-
-  def trait
-    @trait
-  end
-
-  def sumar(otro_trait)
-    @trait.metodos = @trait.metodos + otro_trait.metodos
-  end
-
-  def restar(metodo)
-    metodos = @trait.metodos.select{|m| m.nombre != metodo }
-    if metodos.length == trait.metodos.length
-      @@error_metodo_no_incluido.call
-    end
-    @trait.metodos = metodos
-  end
-
-  def renombrar(hash)
-    metodos_trait = @trait.metodos
-    #p metodos_trait.map{|m| m.nombre}
-    if !metodos_trait.map{|m| m.nombre}.include? hash[:metodo_copiado]
-      @@no_existe_metodo.call
-    end
-    @trait.metodos = @trait.metodos + [MetodoTrait.new(hash[:nuevo_nombre], &metodos_trait.detect{|m| m.es_mi_nombre? hash[:metodo_copiado]}.codigo)]
-  end
-
-  def resolver_conflictos(estrategia)
-    metodos_no_conflictivos = self.obtener_metodos_no_conflictivos
-    self.obtener_metodos_conflictivos.each do |metodo_conflictivo|
+    metodos_no_conflictivos = obtener_metodos_no_conflictivos
+    obtener_metodos_conflictivos.each do |metodo_conflictivo|
       metodos_no_conflictivos << estrategia.aplicar(metodo_conflictivo)
     end
-    @trait.metodos = metodos_no_conflictivos
+    nuevos_metodos = metodos_no_conflictivos
+    self.class.crear_trait(nuevos_metodos)
   end
-
+  private
   def obtener_metodos_conflictivos
-    @trait.metodos.select{|metodo| esta_duplicado(metodo)}
+    self.metodos.select{|metodo| esta_duplicado(metodo)}
         .group_by{|m| m.nombre}.map{|m| MetodoConflictivo.new(m[0], [m[1][0], m[1][1]])}
   end
 
   def obtener_metodos_no_conflictivos
-    @trait.metodos.select{|metodo| !esta_duplicado(metodo)}
+    self.metodos.select{|metodo| !esta_duplicado(metodo)}
   end
 
   def esta_duplicado(metodo)
-    @trait.metodos.map{|m| m.nombre}.count(metodo.nombre) > 1
+    self.metodos.map{|m| m.nombre}.count(metodo.nombre) > 1
   end
-
 end
 
 class Class
