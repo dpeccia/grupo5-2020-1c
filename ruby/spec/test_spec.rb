@@ -122,11 +122,16 @@ describe "Tests de Traits" do
       expect(D.new.metodo3).to eq 200
     end
     it 'la estrategia de aplicar condicion corta el flujo si la cumple' do
-
       class E
         uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion[->(n){n>8}]
       end
       expect(E.new.metodo3).to eq 20
+    end
+    it '...' do
+      class F
+        uses (MiOtroTrait + MiOtroTrait2) & EstrategiaNuevaDefinidaPorElUsuario[2][3]
+      end
+      expect(F.new.metodo3).to eq 35
     end
   end
 

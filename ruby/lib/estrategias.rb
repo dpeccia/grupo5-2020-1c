@@ -19,3 +19,9 @@ AplicarPorCondicion = lambda do |condicion, metodo_conflictivo, *params|
     end
   end
 end.curry
+
+EstrategiaNuevaDefinidaPorElUsuario = lambda do |numero, otro_numero, metodo_conflictivo, *params|
+  res1 = metodo_conflictivo.codigo1.call(*params)
+  res2 = metodo_conflictivo.codigo2.call(*params)
+  res1 + res2 + numero + otro_numero
+end.curry
