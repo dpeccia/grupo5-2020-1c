@@ -57,12 +57,18 @@ class Trait
 
   def &(estrategia)
     metodos_no_conflictivos = obtener_metodos_no_conflictivos
+
     obtener_metodos_conflictivos.each do |metodo_conflictivo|
-      metodos_no_conflictivos << estrategia.aplicar(metodo_conflictivo)
+      nuevo_bloque = proc do |*params|
+        estrategia.call(metodo_conflictivo, *params)
+      end
+      metodos_no_conflictivos << MetodoTrait.new(metodo_conflictivo.nombre, &nuevo_bloque)
     end
+
     nuevos_metodos = metodos_no_conflictivos
     self.class.crear_trait(nuevos_metodos)
   end
+
   private
   def obtener_metodos_conflictivos
     self.metodos.select{|metodo| esta_duplicado(metodo)}

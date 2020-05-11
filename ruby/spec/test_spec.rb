@@ -29,14 +29,6 @@ describe "Tests de Traits" do
         20
       end
     end
-    Estrategia.define do
-      name :OrdenDeAparicion
-      bloque do |*params,&bloque|
-        p metodo_conflictivo
-        metodo_conflictivo.codigo1.call(*params,&bloque)
-        metodo_conflictivo.codigo2.call(*params,&bloque)
-      end
-    end
 
     Trait.define do
       name :MiOtroTrait2
@@ -114,25 +106,25 @@ describe "Tests de Traits" do
   end
 
   describe "Resolucion de conflictos" do
-    xit 'tira error si no se define estrategia y hay conflictos' do
+    it 'tira error si no se define estrategia y hay conflictos' do
       expect{class Rompe uses MiTrait + MiOtroTrait end}.to raise_error 'Tiene conflictos sin resolver'
     end
     it 'la estrategia de orden de aparicion aplica ambos metodos' do
       class C
         uses (MiTrait + MiOtroTrait) & OrdenDeAparicion
       end
-      metodo_conflictivo = "facu"
       expect(C.new.metodo1).to eq "Hola" && "Chau"
     end
-    xit 'la estrategia de aplicar funcion ejecuta ambas como un fold' do
+    it 'la estrategia de aplicar funcion ejecuta ambas como un fold' do
       class D
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarFuncion.new(:*)
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarFunciony[:*]
       end
       expect(D.new.metodo3).to eq 200
     end
-    xit 'la estrategia de aplicar condicion corta el flujo si la cumple' do
+    it 'la estrategia de aplicar condicion corta el flujo si la cumple' do
+
       class E
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion.new(proc {|m| m>8})
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion.curry[->(n){n>8}]
       end
       expect(E.new.metodo3).to eq 20
     end
