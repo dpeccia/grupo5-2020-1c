@@ -117,14 +117,14 @@ describe "Tests de Traits" do
     end
     it 'la estrategia de aplicar funcion ejecuta ambas como un fold' do
       class D
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarFunciony[:*]
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarFuncion[:*]
       end
       expect(D.new.metodo3).to eq 200
     end
     it 'la estrategia de aplicar condicion corta el flujo si la cumple' do
 
       class E
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion.curry[->(n){n>8}]
+        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion[->(n){n>8}]
       end
       expect(E.new.metodo3).to eq 20
     end

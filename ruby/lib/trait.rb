@@ -59,7 +59,7 @@ class Trait
     metodos_no_conflictivos = obtener_metodos_no_conflictivos
 
     obtener_metodos_conflictivos.each do |metodo_conflictivo|
-      nuevo_bloque = proc do |*params|
+      nuevo_bloque = lambda do |*params|
         estrategia.call(metodo_conflictivo, *params)
       end
       metodos_no_conflictivos << MetodoTrait.new(metodo_conflictivo.nombre, &nuevo_bloque)
