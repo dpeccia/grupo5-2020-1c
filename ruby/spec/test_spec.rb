@@ -111,25 +111,25 @@ describe "Tests de Traits" do
     end
     it 'la estrategia de orden de aparicion aplica ambos metodos' do
       class C
-        uses (MiTrait + MiOtroTrait) & OrdenDeAparicion
+        uses (MiTrait + MiOtroTrait) >> OrdenDeAparicion
       end
       expect(C.new.metodo1).to eq "Hola" && "Chau"
     end
     it 'la estrategia de aplicar funcion ejecuta ambas como un fold' do
       class D
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarFuncion[:*]
+        uses (MiOtroTrait + MiOtroTrait2) >> AplicarFuncion[:*]
       end
       expect(D.new.metodo3).to eq 200
     end
     it 'la estrategia de aplicar condicion corta el flujo si la cumple' do
       class E
-        uses (MiOtroTrait + MiOtroTrait2) & AplicarPorCondicion[->(n){n>8}]
+        uses (MiOtroTrait + MiOtroTrait2) >> AplicarPorCondicion[->(n){n>8}]
       end
       expect(E.new.metodo3).to eq 20
     end
     it '...' do
       class F
-        uses (MiOtroTrait + MiOtroTrait2) & EstrategiaNuevaDefinidaPorElUsuario[2][3]
+        uses (MiOtroTrait + MiOtroTrait2) >> EstrategiaNuevaDefinidaPorElUsuario[2][3]
       end
       expect(F.new.metodo3).to eq 35
     end

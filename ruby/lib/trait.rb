@@ -55,7 +55,7 @@ class Trait
     self.class.crear_trait(nuevos_metodos)
   end
 
-  def &(estrategia)
+  def >>(estrategia)
     metodos_no_conflictivos = obtener_metodos_no_conflictivos
 
     obtener_metodos_conflictivos.each do |metodo_conflictivo|
