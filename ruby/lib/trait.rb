@@ -1,3 +1,4 @@
+require_relative 'excepciones'
 require_relative 'estrategias'
 require_relative 'metodos'
 require_relative 'symbol_trait'
@@ -5,9 +6,7 @@ require_relative 'symbol_trait'
 class Trait
   attr_reader :nombre
   attr_accessor :metodos
-  @@metodos_duplicados = proc {raise 'Metodo Repetido'}
-  @@error_metodo_no_incluido = proc {raise 'Solo remueve metodos incluidos en su trait'}
-  @@no_existe_metodo =  proc {raise 'Solo puede renombrar metodos incluidos en el trait'}
+
   def initialize(&bloque)
     @metodos = []
     self.instance_eval(&bloque) unless bloque.nil?
@@ -31,25 +30,18 @@ class Trait
     self.class.crear_trait(nuevos_metodos)
   end
 
-  def self.crear_trait(metodos)
-    nuevo_trait = Trait.new
-    nuevo_trait.metodos = metodos
-    nuevo_trait
-  end
-
   def -(simbolo)
     nuevos_metodos = @metodos.select{|m| m.nombre != simbolo }
     if nuevos_metodos.length == self.metodos.length
-      @@error_metodo_no_incluido.call
+      raise MetodoRemovidoNoExiste
     end
     self.class.crear_trait(nuevos_metodos)
   end
 
   def <<(hash)
     nuevos_metodos = self.metodos
-    #p metodos_trait.map{|m| m.nombre}
-    if !nuevos_metodos.map{|m| m.nombre}.include? hash[:metodo_copiado]
-      @@no_existe_metodo.call
+    unless nuevos_metodos.map { |m| m.nombre }.include? hash[:metodo_copiado]
+      raise MetodoRenombradoNoExiste
     end
     nuevos_metodos = self.metodos + [MetodoTrait.new(hash[:nuevo_nombre], &nuevos_metodos.detect{|m| m.es_mi_nombre? hash[:metodo_copiado]}.codigo)]
     self.class.crear_trait(nuevos_metodos)
@@ -70,6 +62,13 @@ class Trait
   end
 
   private
+
+  def self.crear_trait(metodos)
+    nuevo_trait = Trait.new
+    nuevo_trait.metodos = metodos
+    nuevo_trait
+  end
+
   def obtener_metodos_conflictivos
     self.metodos.select{|metodo| esta_duplicado(metodo)}
         .group_by{|m| m.nombre}.map{|m| MetodoConflictivo.new(m[0], [m[1][0], m[1][1]])}
@@ -88,7 +87,7 @@ class Class
   def uses(trait)
     nombres_metodos = trait.metodos.map {|m| m.nombre}
     if(nombres_metodos.any?{ |m| nombres_metodos.count(m) > 1 })
-      raise "Tiene conflictos sin resolver"
+      raise ConflictosSinResolver
     else
       trait.metodos.each do |m|
         unless self.instance_methods(false).include? m.nombre

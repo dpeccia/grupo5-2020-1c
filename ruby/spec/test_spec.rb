@@ -92,7 +92,7 @@ describe "Tests de Traits" do
       expect(B.instance_methods).not_to include :metodo1
     end
     it 'tira error si se remueve un metodo inexistente' do
-      expect{class C uses MiTrait - :metodo8 end}.to raise_error "Solo remueve metodos incluidos en su trait"
+      expect{class C uses MiTrait - :metodo8 end}.to raise_exception MetodoRemovidoNoExiste
     end
   end
 
@@ -101,13 +101,13 @@ describe "Tests de Traits" do
       expect(ConAlias.new).to respond_to :metodo1 and expect(ConAlias.new).to respond_to :saludo
     end
     it 'tira error si se trata de renombrar un metodo que no existe' do
-      expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_error 'Solo puede renombrar metodos incluidos en el trait'
+      expect{class ConAlias2 uses MiTrait << (:metodo8 >> :saludo) end}.to raise_exception MetodoRenombradoNoExiste
     end
   end
 
   describe "Resolucion de conflictos" do
     it 'tira error si no se define estrategia y hay conflictos' do
-      expect{class Rompe uses MiTrait + MiOtroTrait end}.to raise_error 'Tiene conflictos sin resolver'
+      expect{class Rompe uses MiTrait + MiOtroTrait end}.to raise_exception ConflictosSinResolver
     end
     it 'la estrategia de orden de aparicion aplica ambos metodos' do
       class C
