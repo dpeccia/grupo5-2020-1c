@@ -1,4 +1,4 @@
-case class Torneo (_postas: List[Posta], _dragonesDisponibles: List[Dragon]) {
+class Torneo(var _postas: List[Posta],var _dragonesDisponibles: List[Dragon]) {
   var postas: List[Posta] = _postas
   var dragonesDisponibles: List[Dragon] = _dragonesDisponibles
 }

@@ -11,14 +11,8 @@ trait Competidor {
   def barbarosidad: Double
 }
 
-class Vikingo(_peso: Double, _barbarosidad: Double, _item: Item, _velocidad: Double) extends Competidor {
-  var peso: Double = _peso
-  var item: Item = _item
-  //var nivelDeHambre: Double = 0
-  var barbarosidad: Double = _barbarosidad
-  var velocidad: Double = _velocidad
-
-  def nivelDeHambre: Double = 0
+abstract class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var velocidad: Double) extends Competidor {
+  var nivelDeHambre: Double = 0
 
   def tieneArma: Boolean = item.isInstanceOf [Arma]
 
@@ -56,10 +50,10 @@ class Jinete(_vikingo: Vikingo, _dragon: Dragon) extends Competidor {
   def tieneArma: Boolean = vikingo.tieneArma
 }
 
-class Patapez(_peso: Double, val _barbarosidad: Double, val _item: Item, val _velocidad: Double) extends Vikingo(_peso,_barbarosidad,_item,_velocidad)
-  override def nivelDeHambre:Double = 1
-
+class Patapez(_peso: Double,_barbarosidad: Double, _velocidad: Double,_item: Item = new Comestible(10)) extends Vikingo(_peso,_barbarosidad,_item,_velocidad){
+  //TODO preguntar la cantidad de calorias del comestible, por ahora le puse 10 para ponerle un numero
   override def puedoParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
   override def incrementarNivelDeHambre(hambreAIncrementar: Double): Unit = super.incrementarNivelDeHambre(hambreAIncrementar*2)
+
 }
