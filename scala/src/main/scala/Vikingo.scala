@@ -11,7 +11,7 @@ trait Competidor {
   def barbarosidad: Double
 }
 
-abstract class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var velocidad: Double) extends Competidor {
+class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var velocidad: Double) extends Competidor {
   var nivelDeHambre: Double = 0
 
   def tieneArma: Boolean = item.isInstanceOf [Arma]
@@ -22,20 +22,18 @@ abstract class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,
 
   def danioQueProduce: Double = barbarosidad + item.danioQueProduce
 
-  def incrementarNivelDeHambre(hambreAIncrementar: Double) = nivelDeHambre += hambreAIncrementar
+  def incrementarNivelDeHambre(hambreAIncrementar: Double): Unit = nivelDeHambre += hambreAIncrementar
 
   def montar(dragon: Dragon): Option[Jinete] = {
     if(dragon.puedeSerMontadoPor(this)) {
       return Some(new Jinete(this, dragon))
     }
-    return None
+    None
   }
 
 }
 
-class Jinete(_vikingo: Vikingo, _dragon: Dragon) extends Competidor {
-  val vikingo = _vikingo
-  val dragon = _dragon
+class Jinete(var vikingo: Vikingo, var dragon: Dragon) extends Competidor {
 
   def cuantoPuedeCargar: Double = vikingo.peso - dragon.cuantoPuedeCargar
 
@@ -43,7 +41,7 @@ class Jinete(_vikingo: Vikingo, _dragon: Dragon) extends Competidor {
 
   def velocidad: Double = (dragon.velocidadDeVuelo - vikingo.peso).max(0)
 
-  def incrementarNivelDeHambre(hambreAIncrementar: Double) = vikingo.incrementarNivelDeHambre(vikingo.nivelDeHambre * 0.05)
+  def incrementarNivelDeHambre(hambreAIncrementar: Double): Unit = vikingo.incrementarNivelDeHambre(vikingo.nivelDeHambre * 0.05)
 
   def barbarosidad: Double = vikingo.barbarosidad
 

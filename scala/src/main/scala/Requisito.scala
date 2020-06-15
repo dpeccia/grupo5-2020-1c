@@ -39,5 +39,5 @@ case object RequisitoArma extends RequisitoPosta {
 }
 
 case object RequisitoMontura extends RequisitoPosta {
-  def cumpleRequisito(competidor: Competidor): Boolean = competidor
+  def cumpleRequisito(competidor: Competidor): Boolean = competidor.isInstanceOf [Jinete]
 }
