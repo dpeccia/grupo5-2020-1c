@@ -11,7 +11,7 @@ case class RequisitoBarbarosidad (minimaBarbarosidad: Int) extends Requisito {
 }
 
 case class RequisitoItemParticular (item: Item) extends Requisito {
-  def cumpleRequisito(dragon: Dragon, vikingo: Vikingo): Boolean = vikingo.item.equals(item)
+  def cumpleRequisito(dragon: Dragon, vikingo: Vikingo): Boolean = vikingo.tieneItem(item)
 }
 //TODO ver que hacer con los requisitos de dragon y los de posta
 object RequisitoDanio extends Requisito {
