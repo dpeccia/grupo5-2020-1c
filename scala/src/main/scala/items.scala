@@ -1,4 +1,4 @@
-trait Item {
+class Item {
   def danioQueProduce: Double = 0
 }
 
