@@ -1,5 +1,5 @@
-abstract class Posta (_competidores: List[Competidor], _requisito: Option[RequisitoPosta]) {
-  var competidores: List[Competidor] = _competidores.filter(competidor => this.puedeParticipar(competidor))
+abstract class Posta (_requisito: Option[RequisitoPosta]) {
+  def participantes(competidores: List[Competidor]): List[Competidor] = competidores.filter(competidor => this.puedeParticipar(competidor))
 
   def requisito : Option[RequisitoPosta] = _requisito
 
@@ -7,7 +7,7 @@ abstract class Posta (_competidores: List[Competidor], _requisito: Option[Requis
 
   def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean
 
-  def ordenarSegunQuienEsMejor: List[Competidor] = competidores.sortWith((c1,c2) => this.esMejor(c1,c2))
+  def ordenarSegunQuienEsMejor(competidores: List[Competidor]): List[Competidor] = competidores.sortWith((c1,c2) => this.esMejor(c1,c2))
 
   def puedeParticipar(competidor: Competidor): Boolean = competidor.puedeParticipar(this) && cumpleCondicionParaParticipar(competidor)
 
@@ -18,27 +18,28 @@ abstract class Posta (_competidores: List[Competidor], _requisito: Option[Requis
       true
   }
 
-  def aumentarHambre = competidores.foreach(_.incrementarNivelDeHambre(nivelDeHambreQueIncrementa))
+  def aumentarHambre(competidores: List[Competidor]) = competidores.foreach(_.incrementarNivelDeHambre(nivelDeHambreQueIncrementa))
 
-  def realizarPosta: List[Competidor] = { //quizas despues saquemos esto
-    aumentarHambre
-    ordenarSegunQuienEsMejor
+  def realizarPosta(competidores: List[Competidor]): List[Competidor] = { //quizas despues saquemos esto
+    val competidoresQuePuedenRealizarLaPosta = this.participantes(competidores)
+    aumentarHambre(competidoresQuePuedenRealizarLaPosta)
+    ordenarSegunQuienEsMejor(competidoresQuePuedenRealizarLaPosta)
   }
 
 }
 
-case class Pesca(_competidores: List[Competidor],_requisito: Option[RequisitoPesoDeterminado]) extends Posta(_competidores, _requisito) {
+case class Pesca(_requisito: Option[RequisitoPesoDeterminado]) extends Posta(_requisito) {
   override def nivelDeHambreQueIncrementa: Int = 5
   override def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean =  competidor.cuantoPuedeCargar > otroCompetidor.cuantoPuedeCargar
 }
 
 // TODO: que los tipos de requisito para un combate solo puedan ser los que dice la consigna
-case class Combate(_competidores: List[Competidor],_requisito: Option[RequisitoPosta]) extends Posta(_competidores, _requisito) {
+case class Combate(_requisito: Option[RequisitoPosta]) extends Posta(_requisito) {
   override def nivelDeHambreQueIncrementa: Int = 10
   override def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean = competidor.danioQueProduce > otroCompetidor.danioQueProduce
 }
 
-case class Carrera(_competidores: List[Competidor],_requisito: Option[RequisitoMontura],km: Int) extends Posta(_competidores, _requisito) {
+case class Carrera(_requisito: Option[RequisitoMontura],km: Int) extends Posta(_requisito) {
   override def nivelDeHambreQueIncrementa: Int = km
   override def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean = competidor.velocidad > otroCompetidor.velocidad
 }

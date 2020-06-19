@@ -28,20 +28,18 @@ case class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var 
 
   def danioQueProduce: Double = barbarosidad + item.danioQueProduce
 
-  def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Jinete] = {
-    dragones.map(dragon => montar(dragon)).collect {
-      case option if option.isDefined => option.get
-    }
-  }
+  def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Jinete] = dragones.flatMap(dragon => montar(dragon))
 
-  def mejorMontura(dragones: List[Dragon], posta: Posta): Option[Competidor] = {
+  // TODO: refactor a la posta
+  // TODO: preguntar si es necesario fijarse si puede participar de la posta aca
+  def mejorMontura(dragones: List[Dragon], posta: Posta): Competidor = {
     val competidor = this.dragonesQuePuedeMontar(dragones).fold(this)((competidor, otroCompetidor) => {
-      if(competidor.esMejorQue(otroCompetidor)(posta) && posta.puedeParticipar(competidor))
+      if(competidor.esMejorQue(otroCompetidor)(posta))
         competidor
       else
         otroCompetidor
     })
-    Some(competidor).filter(posta.puedeParticipar)
+    competidor
   }
 
   def incrementarNivelDeHambre(hambreAIncrementar: Double): Unit =  nivelDeHambre += hambreAIncrementar

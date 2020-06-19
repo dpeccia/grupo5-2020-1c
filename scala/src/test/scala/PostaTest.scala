@@ -8,7 +8,7 @@ class PostaTest extends FreeSpec with Matchers{
 
     "Requisito base: que su nivel de hambre no supere el 100%" - {
       "vikingo puede participar de pesca" in {
-        assert(Pesca(List(vikingo), None).puedeParticipar(vikingo))
+        assert(Pesca(None).puedeParticipar(vikingo))
       }
     }
 
@@ -16,17 +16,17 @@ class PostaTest extends FreeSpec with Matchers{
 
       "Requisito Pesca" - {
         "puede no existir un requerimiento para la pesca" in {
-          assertCompiles("Pesca(List(vikingo), None)")
+          assertCompiles("Pesca(None)")
         }
         "si existe el requisito debe ser un RequisitoPesoDeterminado" in {
-          assertTypeError("Pesca(List(vikingo), Option(new RequisitoMontura))")
-          assertCompiles("Pesca(List(vikingo), Option(RequisitoPesoDeterminado(250)))")
+          assertTypeError("Pesca(Option(new RequisitoMontura))")
+          assertCompiles("Pesca(Option(RequisitoPesoDeterminado(250)))")
         }
         "vikingo puede participar de pesca si cumple requisito" in {
-          assert(Pesca(List(vikingo),Option(RequisitoPesoDeterminado(200))).puedeParticipar(vikingo))
+          assert(Pesca(Option(RequisitoPesoDeterminado(200))).puedeParticipar(vikingo))
         }
         "vikingo no puede participar de pesca si no cumple requisito" in {
-          assert(!Pesca(List(vikingo),Option(RequisitoPesoDeterminado(250))).puedeParticipar(vikingo))
+          assert(!Pesca(Option(RequisitoPesoDeterminado(250))).puedeParticipar(vikingo))
         }
       }
 
@@ -36,21 +36,21 @@ class PostaTest extends FreeSpec with Matchers{
 
       "Requisito Carrera" - {
         "puede no existir un requerimiento para la carrera" in {
-          assertCompiles("Carrera(List(vikingo), None,10)")
+          assertCompiles("Carrera(None,10)")
         }
         "si existe el requisito debe ser un RequisitoMontura" in {
-          assertTypeError("Carrera(List(vikingo), Option(RequisitoPesoDeterminado(200)),10)")
-          assertCompiles("Carrera(List(vikingo), Option(new RequisitoMontura),10)")
+          assertTypeError("Carrera(Option(RequisitoPesoDeterminado(200)),10)")
+          assertCompiles("Carrera(Option(new RequisitoMontura),10)")
         }
         "vikingo no puede participar de carrera porque no es un jinete" in {
-          assert(!Carrera(List(vikingo),Option(new RequisitoMontura),10).puedeParticipar(vikingo))
+          assert(!Carrera(Option(new RequisitoMontura),10).puedeParticipar(vikingo))
         }
       }
     }
 
     "Quien es mejor en una posta" - {
       "vikingo que produce mucho danio es mejor que vikingo en un combate" in {
-        vikingoConMasDanio.esMejorQue(vikingo)(Combate(List(vikingo),None))
+        vikingoConMasDanio.esMejorQue(vikingo)(Combate(None))
       }
     }
 
