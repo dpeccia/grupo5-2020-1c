@@ -31,8 +31,8 @@ case class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var 
   def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Jinete] = dragones.flatMap(dragon => montar(dragon))
 
   // TODO: refactor a la posta
-  // TODO: preguntar si es necesario fijarse si puede participar de la posta aca
-  def mejorMontura(dragones: List[Dragon], posta: Posta): Competidor = {
+  // TODO: preguntar si es necesario fijarse si puede participar de la posta aca,
+  def mejorMontura(dragones: List[Dragon], posta: Posta): Competidor = { //TODO cambiar nombre; mejorCompetidor?
     val competidor = this.dragonesQuePuedeMontar(dragones).fold(this)((competidor, otroCompetidor) => {
       if(competidor.esMejorQue(otroCompetidor)(posta))
         competidor
@@ -72,7 +72,7 @@ case class Jinete(var vikingo: Vikingo, var dragon: Dragon) extends Competidor {
 }
 
 class Patapez(_peso: Double,_barbarosidad: Double, _velocidad: Double,_item: Item = Comestible(10)) extends Vikingo(_peso,_barbarosidad,_item,_velocidad){
-  //TODO preguntar la cantidad de calorias del comestible, por ahora le puse 10 para ponerle un numero
+  
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
   override def incrementarNivelDeHambre(hambreAIncrementar: Double): Unit = super.incrementarNivelDeHambre(hambreAIncrementar*2)
