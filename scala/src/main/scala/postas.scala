@@ -1,4 +1,5 @@
 abstract class Posta (_requisito: Option[RequisitoPosta]) {
+
   def participantes(competidores: List[Competidor]): List[Competidor] = competidores.filter(competidor => this.puedeParticipar(competidor))
 
   def requisito : Option[RequisitoPosta] = _requisito
@@ -13,7 +14,7 @@ abstract class Posta (_requisito: Option[RequisitoPosta]) {
 
   def cumpleCondicionParaParticipar(competidor: Competidor): Boolean = {
     if(requisito.isDefined)
-      requisito.get.cumpleRequisito(competidor)
+      requisito.get.apply(competidor)
     else
       true
   }
@@ -28,13 +29,17 @@ abstract class Posta (_requisito: Option[RequisitoPosta]) {
 
 }
 
-case class Pesca(_requisito: Option[RequisitoPesoDeterminado]) extends Posta(_requisito) {
+case class Pesca(_requisito: Option[RequisitoPesoDeterminadoPosta]) extends Posta(_requisito) {
   override def nivelDeHambreQueIncrementa: Int = 5
   override def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean =  competidor.cuantoPuedeCargar > otroCompetidor.cuantoPuedeCargar
 }
 
-// TODO: que los tipos de requisito para un combate solo puedan ser los que dice la consigna
 case class Combate(_requisito: Option[RequisitoPosta]) extends Posta(_requisito) {
+  override def requisito : Option[RequisitoPosta] = _requisito match {
+    case Some(RequisitoArma()) => _requisito
+    case Some(RequisitoBarbarosidadPosta(_)) => _requisito
+    case _ => throw new RuntimeException("Debe tener un requisito de barbarosidad o de arma")
+  }
   override def nivelDeHambreQueIncrementa: Int = 10
   override def esMejor(competidor: Competidor, otroCompetidor: Competidor): Boolean = competidor.danioQueProduce > otroCompetidor.danioQueProduce
 }

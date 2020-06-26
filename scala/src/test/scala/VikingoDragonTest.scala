@@ -34,7 +34,7 @@ class VikingoDragonTest extends FreeSpec with Matchers {
 
     "mejor montura" - {
       "la mejor montura de Hipo en una carrera es como Jinete con Chimuelo" in {
-        val jinete: Option[Competidor] = hipo.mejorMontura(List(chimuelo), Carrera(None, 10))
+        val jinete: Option[Competidor] = hipo.mejorCompetidor(List(chimuelo), Carrera(None, 10))
         assert(jinete.get.asInstanceOf[Jinete].dragon.equals(chimuelo))
       }
     }

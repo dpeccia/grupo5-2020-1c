@@ -7,7 +7,7 @@ trait ReglaTorneo {
 case class Estandar() extends ReglaTorneo {
   def prepararseParaPosta(vikingos: List[Vikingo], dragones: List[Dragon], posta: Posta): List[Competidor] = {
     var listaDeDragones: List[Dragon] = dragones.clone().asInstanceOf[List[Dragon]]
-    vikingos.map(vikingo => vikingo.mejorMontura(dragones, posta) match {
+    vikingos.map(vikingo => vikingo.mejorCompetidor(dragones, posta) match {
       case jinete: Jinete =>
         listaDeDragones.dropWhile(_.equals(jinete.dragon))
         jinete
@@ -51,7 +51,7 @@ case class TorneoInverso() extends Estandar {
 case class BanDeDragones(condicion: Dragon=>Boolean) extends Estandar {
   override def prepararseParaPosta(vikingos: List[Vikingo], dragones: List[Dragon], posta: Posta): List[Competidor] = {
     var listaDeDragones: List[Dragon] = dragones.clone().asInstanceOf[List[Dragon]].filter(condicion)
-    vikingos.map(vikingo => vikingo.mejorMontura(dragones, posta) match {
+    vikingos.map(vikingo => vikingo.mejorCompetidor(dragones, posta) match {
       case jinete: Jinete =>
         listaDeDragones.dropWhile(_.equals(jinete.dragon))
         jinete
@@ -63,7 +63,7 @@ case class BanDeDragones(condicion: Dragon=>Boolean) extends Estandar {
 case class Handicap() extends Estandar {
   override def prepararseParaPosta(vikingos: List[Vikingo], dragones: List[Dragon], posta: Posta): List[Competidor] = {
     var listaDeDragones: List[Dragon] = dragones.clone().asInstanceOf[List[Dragon]]
-    vikingos.reverse.map(vikingo => vikingo.mejorMontura(dragones, posta) match {
+    vikingos.reverse.map(vikingo => vikingo.mejorCompetidor(dragones, posta) match {
       case jinete: Jinete =>
         listaDeDragones.dropWhile(_.equals(jinete.dragon))
         jinete
