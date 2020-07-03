@@ -4,13 +4,13 @@ trait Competidor {
   def cuantoPuedeCargar: Double
   def danioQueProduce: Double
   def velocidad: Double
-  def incrementarNivelDeHambre(hambreAIncrementar: Double): Vikingo
+  def incrementarNivelDeHambre(hambreAIncrementar: Double): Competidor
   def barbarosidad: Double
   def nivelDeHambre: Double
   def esMejorQue(otroCompetidor: Competidor)(posta: Posta): Boolean = posta.esMejor(this, otroCompetidor)
 }
 
-case class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
+case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
 
   def tieneArma: Boolean = item match {
     case Arma(_) => true
@@ -22,24 +22,15 @@ case class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var 
   def cuantoPuedeCargar: Double = peso / 2 + 2 * barbarosidad
 
   def puedeParticipar(posta: Posta): Boolean = {
-    val unCompetidor: Competidor = copy()
-    unCompetidor.incrementarNivelDeHambre(posta.nivelDeHambreQueIncrementa)
+    val unCompetidor: Competidor = this.incrementarNivelDeHambre(posta.nivelDeHambreQueIncrementa)
     unCompetidor.nivelDeHambre < 100
   }
 
   def danioQueProduce: Double = barbarosidad + item.danioQueProduce
 
-  def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Jinete] = dragones.flatMap(dragon => montar(dragon))
+  def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Competidor] = dragones.flatMap(dragon => montar(dragon))
 
-  def mejorCompetidor(dragones: List[Dragon], posta: Posta): Competidor = {
-    val competidor = this.dragonesQuePuedeMontar(dragones).fold(this)((competidor, otroCompetidor) => {
-      if(competidor.esMejorQue(otroCompetidor)(posta))
-        competidor
-      else
-        otroCompetidor
-    })
-    competidor
-  }
+  def mejorCompetidor(dragones: List[Dragon], posta: Posta): Competidor = this.dragonesQuePuedeMontar(dragones).maxBy(esMejorQue (_)(posta))
 
   def incrementarNivelDeHambre(hambreAIncrementar: Double): Vikingo = copy(nivelDeHambre = nivelDeHambre + hambreAIncrementar)
 
@@ -52,7 +43,7 @@ case class Vikingo(var peso: Double,var barbarosidad: Double,var item: Item,var 
 
 }
 
-case class Jinete(var vikingo: Vikingo, var dragon: Dragon) extends Competidor {
+case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   def nivelDeHambre: Double = vikingo.nivelDeHambre
 
   def puedeParticipar(posta: Posta): Boolean = vikingo.puedeParticipar(posta)
@@ -63,7 +54,7 @@ case class Jinete(var vikingo: Vikingo, var dragon: Dragon) extends Competidor {
 
   def velocidad: Double = (dragon.velocidadDeVuelo - vikingo.peso).max(0)
 
-  def incrementarNivelDeHambre(hambreAIncrementar: Double): Vikingo = vikingo.incrementarNivelDeHambre(vikingo.nivelDeHambre * 0.05)
+  def incrementarNivelDeHambre(hambreAIncrementar: Double): Jinete = copy(vikingo = vikingo.incrementarNivelDeHambre(vikingo.nivelDeHambre * 0.05))
 
   def barbarosidad: Double = vikingo.barbarosidad
 

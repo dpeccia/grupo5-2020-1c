@@ -14,7 +14,7 @@ case object RequisitoDanio extends RequisitoDragon {
   def apply(dragon: Dragon, vikingo: Vikingo): Boolean = dragon.danio > vikingo.danioQueProduce
 }
 
-case class RequisitoBarbarosidadDragon (minimaBarbarosidad: Int) extends RequisitoDragon {
+case class RequisitoBarbarosidadDragon (minimaBarbarosidad: Double) extends RequisitoDragon {
   def apply(dragon: Dragon, vikingo: Vikingo): Boolean = vikingo.barbarosidad >= minimaBarbarosidad
 }
 
@@ -34,7 +34,7 @@ case class RequisitoMontura() extends RequisitoPosta {
   def apply(competidor: Competidor): Boolean = competidor.isInstanceOf [Jinete]
 }
 
-case class RequisitoBarbarosidadPosta (minimaBarbarosidad: Int) extends RequisitoPosta {
+case class RequisitoBarbarosidadPosta (minimaBarbarosidad: Double) extends RequisitoPosta {
   def apply(competidor: Competidor): Boolean = competidor.barbarosidad >= minimaBarbarosidad
 }
 
