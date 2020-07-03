@@ -10,7 +10,7 @@ trait Competidor {
   def esMejorQue(otroCompetidor: Competidor)(posta: Posta): Boolean = posta.esMejor(this, otroCompetidor)
 }
 
-case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
+case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0, equipo: String) extends Competidor {
 
   def tieneArma: Boolean = item match {
     case Arma(_) => true
@@ -40,6 +40,8 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
     }
     None
   }
+
+  def cambiarEquipo(nuevoEquipo: String) = copy(equipo = nuevoEquipo)
 
 }
 
