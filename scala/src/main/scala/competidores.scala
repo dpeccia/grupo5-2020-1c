@@ -46,6 +46,8 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
   def vikingoAsociado: Vikingo = this
 
   def dragonAsociado: Option[Dragon] = None
+
+  def esDeEquipo(equipo: Equipo): Boolean = equipo.vikingos.contains(this)
 }
 
 case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {

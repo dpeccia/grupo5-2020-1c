@@ -1,10 +1,22 @@
+case class Equipo(vikingos: List[Vikingo]) {
+  def cantidadDeGanadores(ganadoresDelTorneo: List[Vikingo]): Int = ganadoresDelTorneo.count(_.esDeEquipo(this))
+}
+
 case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
 
-  def realizarTorneo(participantes: List[Vikingo], regla: Regla): Option[Vikingo] = {
+  def realizarTorneoIndividualmente(participantes: List[Vikingo], regla: Regla): Option[Vikingo] = {
     obtenerGanadores(participantes, regla) match {
-      case ganadores if ganadores.get.length.equals(1) => Some(ganadores.get.head)
-      case ganadores => desempatar(ganadores.get, regla)
-      case None => None
+      case Some(ganadores) if ganadores.length.equals(1) => Some(ganadores.head)
+      case Some(ganadores) => desempatar(ganadores, regla)
+      case _ => None
+    }
+  }
+
+  def realizarTorneoPorEquipos(participantes: List[Equipo]): Option[Equipo] = {
+    obtenerGanadores(participantes.flatMap(_.vikingos), Estandar) match {
+      case Some(ganadores) if ganadores.length.equals(1) => Some(Equipo(ganadores))
+      case Some(ganadores) => Some(participantes.maxBy(_.cantidadDeGanadores(ganadores)))
+      case _ => None
     }
   }
 
@@ -46,7 +58,6 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
 
   def desempatar(ganadores: List[Vikingo], regla: Regla): Option[Vikingo] = regla match {
     case TorneoInverso => Some(ganadores.last) // al que peor le fue en la ultima
-    case PorEquipos =>  ganadores.groupBy(_.equipo).valuesIterator.maxBy(_.size)
     case _ => Some(ganadores.head) // al que mejor le fue en la ultima
   }
 }
