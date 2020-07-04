@@ -20,13 +20,13 @@ class PostaTest extends FreeSpec with Matchers{
         }
         "si existe el requisito debe ser un RequisitoPesoDeterminado" in {
           assertTypeError("Pesca(Option(new RequisitoMontura))")
-          assertCompiles("Pesca(Option(RequisitoPesoDeterminado(250)))")
+          assertCompiles("Pesca(Option(RequisitoPesoDeterminadoPosta(250)))")
         }
         "vikingo puede participar de pesca si cumple requisito" in {
-          assert(Pesca(Option(RequisitoPesoDeterminado(200))).puedeParticipar(vikingo))
+          assert(Pesca(Option(RequisitoPesoDeterminadoPosta(200))).puedeParticipar(vikingo))
         }
         "vikingo no puede participar de pesca si no cumple requisito" in {
-          assert(!Pesca(Option(RequisitoPesoDeterminado(250))).puedeParticipar(vikingo))
+          assert(!Pesca(Option(RequisitoPesoDeterminadoPosta(250))).puedeParticipar(vikingo))
         }
       }
 

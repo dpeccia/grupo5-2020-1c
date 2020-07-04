@@ -12,7 +12,7 @@ trait Competidor {
   def dragonAsociado: Option[Dragon]
 }
 
-case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, equipo: String, nivelDeHambre: Double = 0) extends Competidor {
+case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
 
   def tieneArma: Boolean = item match {
     case Arma(_) => true
@@ -72,7 +72,7 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   def dragonAsociado: Option[Dragon] = Some(dragon)
 }
 
-case class Patapez(_equipo: String) extends Vikingo(10,10, Comestible(10), 10, _equipo) {
+object Patapez extends Vikingo(10,10, Comestible(10), 10) {
   
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
