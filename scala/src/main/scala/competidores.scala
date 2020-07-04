@@ -8,9 +8,10 @@ trait Competidor {
   def barbarosidad: Double
   def nivelDeHambre: Double
   def esMejorQue(otroCompetidor: Competidor)(posta: Posta): Boolean = posta.esMejor(this, otroCompetidor)
+  def vikingoAsociado: Vikingo
 }
 
-case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0, equipo: String) extends Competidor {
+case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, equipo: String, nivelDeHambre: Double = 0) extends Competidor {
 
   def tieneArma: Boolean = item match {
     case Arma(_) => true
@@ -41,7 +42,7 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
     None
   }
 
-  def cambiarEquipo(nuevoEquipo: String) = copy(equipo = nuevoEquipo)
+  def vikingoAsociado: Vikingo = this
 
 }
 
@@ -61,9 +62,11 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   def barbarosidad: Double = vikingo.barbarosidad
 
   def tieneArma: Boolean = vikingo.tieneArma
+
+  def vikingoAsociado: Vikingo = vikingo
 }
 
-case object Patapez extends Vikingo(10,10, Comestible(10), 10) {
+case class Patapez(_equipo: String) extends Vikingo(10,10, Comestible(10), 10, _equipo) {
   
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
