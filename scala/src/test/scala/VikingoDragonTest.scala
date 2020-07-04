@@ -22,7 +22,7 @@ class VikingoDragonTest extends FreeSpec with Matchers {
 
     "montura no exitosa" - {
       "patapez no puede montar a un furiaNocturna porque no cumple requisito de peso" in {
-        val jinete: Option[Jinete]= Patapez.montar(furiaNocturna)
+        val jinete: Option[Jinete]= patapez.montar(furiaNocturna)
         assert(jinete.isEmpty)
       }
       "astrid no puede montar a chimuelo porque aunque cumple requisito de peso, no cumple requisito particular de este dragon" in {

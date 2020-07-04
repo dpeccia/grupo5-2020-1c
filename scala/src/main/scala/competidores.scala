@@ -32,7 +32,10 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
 
   def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Competidor] = dragones.flatMap(dragon => montar(dragon))
 
-  def mejorCompetidor(dragones: List[Dragon], posta: Posta): Competidor = this.dragonesQuePuedeMontar(dragones).maxBy(esMejorQue (_)(posta))
+  def mejorCompetidor(dragones: List[Dragon], posta: Posta): Competidor = this.dragonesQuePuedeMontar(dragones) match {
+    case opciones if opciones.isEmpty => this
+    case opciones => opciones.maxBy(esMejorQue (_)(posta))
+  }
 
   def incrementarNivelDeHambre(hambreAIncrementar: Double): Vikingo = copy(nivelDeHambre = nivelDeHambre + hambreAIncrementar)
 
@@ -61,7 +64,7 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
 
   def velocidad: Double = (dragon.velocidadDeVuelo - vikingo.peso).max(0)
 
-  def incrementarNivelDeHambre(hambreAIncrementar: Double): Jinete = copy(vikingo = vikingo.incrementarNivelDeHambre(vikingo.nivelDeHambre * 0.05))
+  def incrementarNivelDeHambre(hambreAIncrementar: Double): Jinete = copy(vikingo = vikingo.incrementarNivelDeHambre(5))
 
   def barbarosidad: Double = vikingo.barbarosidad
 
@@ -72,7 +75,7 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   def dragonAsociado: Option[Dragon] = Some(dragon)
 }
 
-object Patapez extends Vikingo(10,10, Comestible(10), 10) {
+object patapez extends Vikingo(10,10, Comestible(10), 10) {
   
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 

@@ -20,11 +20,15 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
     }
   }
 
-  // TODO: ver si hay un solo ganador en una posta, y no seguir las demas
   def obtenerGanadores(participantes: List[Vikingo], regla: Regla): Option[List[Vikingo]] = {
     postas.foldRight(Option(participantes))((posta, resultadoAnterior) => {
-      val ganadoresPostaAnterior = prepararseParaPostaSegunRegla(posta, resultadoAnterior.getOrElse(return None), dragonesDisponibles, regla)
-      pasanALaSiguientePosta(posta, ganadoresPostaAnterior, regla)
+      val ganadoresPostaAnterior = prepararseParaPostaSegunRegla(posta, resultadoAnterior.get, dragonesDisponibles, regla)
+      val resultadoPosta = pasanALaSiguientePosta(posta, ganadoresPostaAnterior, regla)
+      resultadoPosta match {
+        case Some(ganadores) if ganadores.length.equals(1) => return Some(ganadores)
+        case Some(ganadores) => Some(ganadores)
+        case _ => return None
+      }
     })
   }
 
@@ -41,19 +45,20 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
     participantes.foldRight(dragonesDisponiblesPosta) ((vikingo: Vikingo, dragonesNoTomados: List[Dragon]) => {
       val competidor = vikingo.mejorCompetidor(dragonesNoTomados, posta)
       competidores = competidores.++(List(competidor))
-      dragonesNoTomados.filterNot(_.equals(competidor.dragonAsociado.get))
+      if(competidor.dragonAsociado.isDefined) dragonesNoTomados.filterNot(_.equals(competidor.dragonAsociado.get)) else dragonesNoTomados
     })
     competidores
   }
 
-  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor], regla: Regla): Option[List[Vikingo]] = regla match {
-    case Eliminacion(cantidadAEliminar) => Some(posta.realizarPosta(participantes).take(cantidadAEliminar))
-    case TorneoInverso =>
-      val ganadoresPosta = posta.realizarPosta(participantes)
-      Some(ganadoresPosta.takeRight(ganadoresPosta.length / 2))
-    case _ =>
-      val ganadoresPosta = posta.realizarPosta(participantes)
-      Some(ganadoresPosta.take(ganadoresPosta.length / 2))
+  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor], regla: Regla): Option[List[Vikingo]] = {
+    val ganadoresPosta = posta.realizarPosta(participantes)
+    regla match {
+      case _ if ganadoresPosta.isEmpty => None
+      case _ if ganadoresPosta.length.equals(1) => Some(ganadoresPosta)
+      case Eliminacion(cantidadAEliminar) => Some(ganadoresPosta.take(ganadoresPosta.length - cantidadAEliminar))
+      case TorneoInverso => Some(ganadoresPosta.takeRight(ganadoresPosta.length / 2))
+      case _ => Some(ganadoresPosta.take(ganadoresPosta.length / 2))
+    }
   }
 
   def desempatar(ganadores: List[Vikingo], regla: Regla): Option[Vikingo] = regla match {
