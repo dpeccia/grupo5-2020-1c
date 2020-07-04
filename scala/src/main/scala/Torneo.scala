@@ -1,26 +1,37 @@
 case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
 
-  // TODO: ver si hay un solo ganador en una posta, y no seguir las demas
   def realizarTorneo(participantes: List[Vikingo], regla: Regla): Option[Vikingo] = {
-    postas.foldRight(Option(participantes)) ((posta, resultadoAnterior) => resultadoAnterior match {
-      case Some(competidoresPostaAnterior) =>
-        val competidoresListos: List[Competidor] =
-          prepararseParaPosta(posta, competidoresPostaAnterior, copy().dragonesDisponibles, regla)
-        pasanALaSiguientePosta(posta, competidoresListos, regla)
-      case None => None
-    }) match {
+    obtenerGanadores(participantes, regla) match {
       case ganadores if ganadores.get.length.equals(1) => Some(ganadores.get.head)
       case ganadores => desempatar(ganadores.get, regla)
       case None => None
     }
   }
 
+  // TODO: ver si hay un solo ganador en una posta, y no seguir las demas
+  def obtenerGanadores(participantes: List[Vikingo], regla: Regla): Option[List[Vikingo]] = {
+    postas.foldRight(Option(participantes))((posta, resultadoAnterior) => {
+      val ganadoresPostaAnterior = prepararseParaPostaSegunRegla(posta, resultadoAnterior.getOrElse(return None), dragonesDisponibles, regla)
+      pasanALaSiguientePosta(posta, ganadoresPostaAnterior, regla)
+    })
+  }
+
   // Etapas del torneo
 
-  def prepararseParaPosta(posta: Posta, participantes: List[Vikingo], dragonesDisponiblesPosta: List[Dragon], regla: Regla): List[Competidor] = regla match {
-    case BanDeDragones(condicion) => participantes.map(participante => elegirMejorOpcion(participante, dragonesDisponiblesPosta.filter(condicion), posta))
-    case Handicap => participantes.reverse.map(participante => elegirMejorOpcion(participante, dragonesDisponiblesPosta, posta))
-    case _ => participantes.map(participante => elegirMejorOpcion(participante, dragonesDisponiblesPosta, posta))
+  def prepararseParaPostaSegunRegla(posta: Posta, participantes: List[Vikingo], dragonesDisponiblesPosta: List[Dragon], regla: Regla): List[Competidor] = regla match {
+    case BanDeDragones(condicion) => prepararseParaPosta(posta, participantes, dragonesDisponiblesPosta.filter(condicion))
+    case Handicap => prepararseParaPosta(posta, participantes.reverse, dragonesDisponiblesPosta)
+    case _ => prepararseParaPosta(posta, participantes, dragonesDisponiblesPosta)
+  }
+
+  def prepararseParaPosta(posta: Posta, participantes: List[Vikingo], dragonesDisponiblesPosta: List[Dragon]): List[Competidor] = {
+    var competidores: List[Competidor] = Nil
+    participantes.foldRight(dragonesDisponiblesPosta) ((vikingo: Vikingo, dragonesNoTomados: List[Dragon]) => {
+      val competidor = vikingo.mejorCompetidor(dragonesNoTomados, posta)
+      competidores = competidores.++(List(competidor))
+      dragonesNoTomados.filterNot(_.equals(competidor.dragonAsociado.get))
+    })
+    competidores
   }
 
   def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor], regla: Regla): Option[List[Vikingo]] = regla match {
@@ -37,16 +48,5 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon]) {
     case TorneoInverso => Some(ganadores.last) // al que peor le fue en la ultima
     case PorEquipos =>  ganadores.groupBy(_.equipo).valuesIterator.maxBy(_.size)
     case _ => Some(ganadores.head) // al que mejor le fue en la ultima
-  }
-
-  // Helpers para las etapas del torneo
-
-  private def elegirMejorOpcion(vikingo: Vikingo, dragones: List[Dragon], posta: Posta): Competidor = {
-    vikingo.mejorCompetidor(dragones, posta) match {
-      case jinete: Jinete =>
-        dragones.dropWhile(_.equals(jinete.dragon))
-        jinete
-      case vikingo: Vikingo => vikingo
-    }
   }
 }
