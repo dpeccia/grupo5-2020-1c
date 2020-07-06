@@ -22,7 +22,7 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: 
 
   def obtenerGanadores(participantes: List[Vikingo]): Option[List[Vikingo]] = {
     postas.foldRight(Option(participantes))((posta, resultadoAnterior) => {
-      val ganadoresPostaAnterior = regla.prepararseParaPosta(posta,participantes,dragonesDisponibles)
+      val ganadoresPostaAnterior = regla.prepararseParaPosta(posta,resultadoAnterior.get,dragonesDisponibles)
       regla.pasanALaSiguientePosta(posta, ganadoresPostaAnterior)
     })
   }
