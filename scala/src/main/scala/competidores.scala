@@ -77,7 +77,7 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   override def esTuDragon(unDragon: Dragon): Boolean = unDragon.equals(dragon)
 }
 
-object patapez extends Vikingo(10,10, Comestible(10), 10) {
+object Patapez extends Vikingo(10,10, Comestible(10), 10) {
   
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
