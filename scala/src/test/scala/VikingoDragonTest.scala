@@ -2,8 +2,8 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class VikingoDragonTest extends FreeSpec with Matchers {
     val hipo: Vikingo = Vikingo(2, 10, SistemaDeVuelo, 10)
-    val astrid: Vikingo = Vikingo(15, 20, new Arma(30), 100)
-    val furiaNocturna: Dragon = FuriaNocturna(50,100, new Arma(40))
+    val astrid: Vikingo = Vikingo(15, 20, Arma(30), 100)
+    val furiaNocturna: Dragon = FuriaNocturna(50,100, Arma(40))
     val chimuelo: Dragon = FuriaNocturna(50, 100, SistemaDeVuelo)
     val gronckle: Dragon = Gronckle(60, 3)
 
@@ -21,8 +21,8 @@ class VikingoDragonTest extends FreeSpec with Matchers {
     }
 
     "montura no exitosa" - {
-      "patapez no puede montar a un furiaNocturna porque no cumple requisito de peso" in {
-        val jinete: Option[Jinete]= patapez.montar(furiaNocturna)
+      "Patapez no puede montar a un furiaNocturna porque no cumple requisito de peso" in {
+        val jinete: Option[Jinete]= Patapez.montar(furiaNocturna)
         assert(jinete.isEmpty)
       }
       "astrid no puede montar a chimuelo porque aunque cumple requisito de peso, no cumple requisito particular de este dragon" in {
