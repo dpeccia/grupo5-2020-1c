@@ -10,36 +10,36 @@ class TorneoTest extends FreeSpec with Matchers {
   val gronckle: Dragon = Gronckle(60, 3)
 
   val festivalDeInvierno: Torneo = Torneo(List(Combate(Some(RequisitoBarbarosidadPosta(13))), Carrera(None, 11), Pesca(None)),
-                                          List(chimuelo, nadderMortiferoRojo, gronckle))
+                                          List(chimuelo, nadderMortiferoRojo, gronckle),new Estandar())
 
   "Participacion Individual" - {
     "patan gana el festival de invierno con regla Estandar" in {
       assertResult(Some(patan.incrementarNivelDeHambre(16))) {
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez), Estandar)
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez))
       }
     }
 
     "astrid gana el festival de invierno con regla de Eliminacion" in {
       assertResult(Some(astrid.incrementarNivelDeHambre(21))) {
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez), Eliminacion(1))
+        festivalDeInvierno.setRegla(Eliminacion(1)).realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez))
       }
     }
 
     "patapez gana el festival de invierno con regla de Torneo Inverso" in {
       assertResult(Some(patapez.incrementarNivelDeHambre(7.5))) {
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez), TorneoInverso)
+        festivalDeInvierno.setRegla(TorneoInverso).realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez))
       }
     }
 
     "astrid gana el festival de invierno con regla de Ban de Dragones" in {
       assertResult(Some(astrid.incrementarNivelDeHambre(16))) {
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez), BanDeDragones(dragon => dragon.peso < 60))
+        festivalDeInvierno.setRegla(BanDeDragones(dragon => dragon.peso < 60)).realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez))
       }
     }
 
     "patan gana el festival de invierno con Handicap" in {
       assertResult(Some(patan.incrementarNivelDeHambre(16))) {
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez), Handicap)
+        festivalDeInvierno.setRegla(Handicap).realizarTorneoIndividualmente(List(hipo, astrid, patan, patapez))
       }
     }
   }
