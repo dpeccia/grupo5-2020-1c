@@ -7,7 +7,7 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: 
   def realizarTorneoIndividualmente(participantes: List[Vikingo]): Option[Vikingo] = {
     val ganadores = obtenerGanadores(participantes).getOrElse(return None)
     if (ganadores.length.equals(1)) return Some(ganadores.head)
-    desempatar(ganadores)
+    regla.desempatar(participantes)
   }
   def setRegla(nuevaRegla: Regla): Torneo = {
     copy(regla = nuevaRegla)
@@ -22,27 +22,8 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: 
 
   def obtenerGanadores(participantes: List[Vikingo]): Option[List[Vikingo]] = {
     postas.foldRight(Option(participantes))((posta, resultadoAnterior) => {
-      val ganadoresPostaAnterior = prepararseParaPostaSegunRegla(posta, resultadoAnterior.get, dragonesDisponibles)
-      val resultadoPosta = pasanALaSiguientePosta(posta, ganadoresPostaAnterior)
-      resultadoPosta match {
-        case Some(ganadores) if ganadores.length.equals(1) => return Some(ganadores)
-        case Some(ganadores) => Some(ganadores)
-        case _ => return None
-      }
+      val ganadoresPostaAnterior = regla.prepararseParaPosta(posta,participantes,dragonesDisponibles)
+      regla.pasanALaSiguientePosta(posta, ganadoresPostaAnterior)
     })
-  }
-
-  // Etapas del torneo
-
-  def prepararseParaPostaSegunRegla(posta: Posta, participantes: List[Vikingo], dragonesDisponiblesPosta: List[Dragon]): List[Competidor] = {
-    regla.prepararseParaPosta(posta,participantes,dragonesDisponibles)
-  }
-
-  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor]): Option[List[Vikingo]] = {
-    regla.pasanALaSiguientePosta(posta,participantes)
-  }
-
-  def desempatar(ganadores: List[Vikingo]): Option[Vikingo] = {
-    regla.desempatar(ganadores)
   }
 }

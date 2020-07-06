@@ -14,10 +14,7 @@ trait Competidor {
 
 case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
 
-  def tieneArma: Boolean = item match {
-    case Arma(_) => true
-    case _ => false
-  }
+  def tieneArma: Boolean = item.esArma()
 
   def tieneItem(unItem: Item): Boolean = item.equals(unItem)
 
