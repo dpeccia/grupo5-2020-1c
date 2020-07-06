@@ -5,11 +5,9 @@ case class Equipo(vikingos: List[Vikingo]) {
 case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: Regla) {
 
   def realizarTorneoIndividualmente(participantes: List[Vikingo]): Option[Vikingo] = {
-    obtenerGanadores(participantes) match {
-      case Some(ganadores) if ganadores.length.equals(1) => Some(ganadores.head)
-      case Some(ganadores) => desempatar(ganadores)
-      case _ => None
-    }
+    val ganadores = obtenerGanadores(participantes).getOrElse(return None)
+    if (ganadores.length.equals(1)) return Some(ganadores.head)
+    desempatar(ganadores)
   }
   def setRegla(nuevaRegla: Regla): Torneo = {
     copy(regla = nuevaRegla)
@@ -17,11 +15,9 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: 
 
 
   def realizarTorneoPorEquipos(participantes: List[Equipo]): Option[Equipo] = {
-    obtenerGanadores(participantes.flatMap(_.vikingos)) match {
-      case Some(ganadores) if ganadores.length.equals(1) => Some(Equipo(ganadores))
-      case Some(ganadores) => Some(participantes.maxBy(_.cantidadDeGanadores(ganadores)))
-      case _ => None
-    }
+    val ganadores = obtenerGanadores(participantes.flatMap(_.vikingos)).getOrElse(return None)
+    if (ganadores.length.equals(1)) return Some(Equipo(ganadores))
+    Some(participantes.maxBy(_.cantidadDeGanadores(ganadores)))
   }
 
   def obtenerGanadores(participantes: List[Vikingo]): Option[List[Vikingo]] = {
