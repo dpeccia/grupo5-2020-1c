@@ -31,7 +31,7 @@ case class RequisitoArma() extends RequisitoPosta {
 }
 
 case class RequisitoMontura() extends RequisitoPosta {
-  def apply(competidor: Competidor): Boolean = competidor.dragonAsociado.isDefined
+  def apply(competidor: Competidor): Boolean = competidor.tenesDragon
 }
 
 case class RequisitoBarbarosidadPosta (minimaBarbarosidad: Double) extends RequisitoPosta {

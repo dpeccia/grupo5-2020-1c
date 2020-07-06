@@ -1,11 +1,9 @@
 trait Item {
-  def danioQueProduce: Double = 0
+  val danioQueProduce: Double = 0
   def esArma(): Boolean = false
 }
 
-case class Arma (_danioQueProduce: Double) extends Item {
-  override def danioQueProduce: Double = _danioQueProduce
-
+case class Arma (override val danioQueProduce: Double) extends Item {
   override def esArma(): Boolean = true
 }
 

@@ -9,7 +9,8 @@ trait Competidor {
   def nivelDeHambre: Double
   def esMejorQue(otroCompetidor: Competidor)(posta: Posta): Boolean = posta.esMejor(this, otroCompetidor)
   def vikingoAsociado: Vikingo
-  def dragonAsociado: Option[Dragon]
+  def tenesDragon: Boolean
+  def esTuDragon(unDragon: Dragon): Boolean = false
 }
 
 case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
@@ -45,7 +46,7 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
 
   def vikingoAsociado: Vikingo = this
 
-  def dragonAsociado: Option[Dragon] = None
+  def tenesDragon: Boolean = false
 
   def esDeEquipo(equipo: Equipo): Boolean = equipo.vikingos.contains(this)
 }
@@ -70,6 +71,10 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
   def vikingoAsociado: Vikingo = vikingo
 
   def dragonAsociado: Option[Dragon] = Some(dragon)
+
+  def tenesDragon: Boolean = true
+
+  override def esTuDragon(unDragon: Dragon): Boolean = unDragon.equals(dragon)
 }
 
 object patapez extends Vikingo(10,10, Comestible(10), 10) {
