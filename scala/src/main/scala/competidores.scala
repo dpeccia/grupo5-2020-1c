@@ -2,7 +2,7 @@ trait Competidor {
   def puedeParticipar(posta: Posta): Boolean
   def tieneArma: Boolean
   def cuantoPuedeCargar: Double
-  def danioQueProduce: Double
+  val danioQueProduce: Double
   def velocidad: Double
   def incrementarNivelDeHambre(hambreAIncrementar: Double): Competidor
   def barbarosidad: Double
@@ -14,6 +14,7 @@ trait Competidor {
 }
 
 case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Double, nivelDeHambre: Double = 0) extends Competidor {
+  val danioQueProduce: Double = barbarosidad + item.danioQueProduce
 
   def tieneArma: Boolean = item.esArma()
 
@@ -25,8 +26,6 @@ case class Vikingo(peso: Double, barbarosidad: Double, item: Item, velocidad: Do
     val unCompetidor: Competidor = this.incrementarNivelDeHambre(posta.nivelDeHambreQueIncrementa)
     unCompetidor.nivelDeHambre < 100
   }
-
-  def danioQueProduce: Double = barbarosidad + item.danioQueProduce
 
   def dragonesQuePuedeMontar(dragones: List[Dragon]): List[Competidor] = dragones.flatMap(dragon => montar(dragon))
 
@@ -58,7 +57,7 @@ case class Jinete(vikingo: Vikingo, dragon: Dragon) extends Competidor {
 
   def cuantoPuedeCargar: Double = vikingo.peso - dragon.cuantoPuedeCargar
 
-  def danioQueProduce: Double = vikingo.danioQueProduce + dragon.danio
+  val danioQueProduce: Double = vikingo.danioQueProduce + dragon.danio
 
   def velocidad: Double = (dragon.velocidadDeVuelo - vikingo.peso).max(0)
 
