@@ -1,10 +1,10 @@
-abstract class Dragon (val peso: Int) {
+trait Dragon {
+  val peso: Int
   val danio: Int
+  val requisitosEspecificos: Set[RequisitoDragon]
   val requisitos: Set[RequisitoDragon] = requisitoBase ++ requisitosEspecificos
 
   def requisitoBase: Set[RequisitoDragon] = Set(RequisitoPeso)
-
-  def requisitosEspecificos: Set[RequisitoDragon]
 
   def velocidadBase: Double = 60
 
@@ -15,19 +15,18 @@ abstract class Dragon (val peso: Int) {
   def puedeSerMontadoPor(vikingo: Vikingo): Boolean = requisitos.forall(_.apply(this, vikingo))
 }
 
-case class FuriaNocturna (_peso: Int, _danio: Int, item: Item) extends Dragon(_peso) {
-  override def requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoItemParticular(item))
-  override val danio: Int = _danio
+case class FuriaNocturna (peso: Int,danio: Int, item: Item) extends Dragon() {
+  override val requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoItemParticular(item))
   override def velocidadDeVuelo: Double = super.velocidadDeVuelo * 3
 }
 
-case class NadderMortifero (_peso: Int) extends Dragon(_peso) {
-  override def requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoDanio)
+case class NadderMortifero (peso: Int) extends Dragon() {
+  override val requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoDanio)
   override val danio: Int = 150
 }
 
-case class Gronckle (_peso: Int, _pesoDeterminado: Int) extends Dragon(_peso) {
-  override def requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoPesoDeterminadoDragon(_pesoDeterminado))
+case class Gronckle (peso: Int, pesoDeterminado: Int) extends Dragon() {
+  override val requisitosEspecificos: Set[RequisitoDragon] = Set(RequisitoPesoDeterminadoDragon(pesoDeterminado))
   override val danio: Int = peso * 5
   override def velocidadBase: Double = super.velocidadBase / 2
 }
