@@ -10,7 +10,7 @@ class Estandar() extends Regla{
     participantes.foldRight(dragonesDisponiblesPosta) ((vikingo: Vikingo, dragonesNoTomados: List[Dragon]) => {
       val competidor = vikingo.mejorCompetidor(dragonesNoTomados, posta)
       competidores = competidores.++(List(competidor))
-      if(competidor.tenesDragon) dragonesNoTomados.filterNot(_.equals(competidor.esTuDragon(_))) else dragonesNoTomados
+      if(competidor.tenesDragon) dragonesNoTomados.filterNot(competidor.esTuDragon(_)) else dragonesNoTomados
     })
     competidores
   }
