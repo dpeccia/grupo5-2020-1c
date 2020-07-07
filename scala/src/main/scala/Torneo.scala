@@ -7,7 +7,7 @@ case class Torneo(postas: List[Posta], dragonesDisponibles: List[Dragon],regla: 
   def realizarTorneoIndividualmente(participantes: List[Vikingo]): Option[Vikingo] = {
     val ganadores = obtenerGanadores(participantes).getOrElse(return None)
     if (ganadores.length.equals(1)) return Some(ganadores.head)
-    regla.desempatar(participantes)
+    regla.desempatar(ganadores)//regla.desempatar(participantes)
   }
   def setRegla(nuevaRegla: Regla): Torneo = {
     copy(regla = nuevaRegla)
