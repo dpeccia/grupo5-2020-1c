@@ -10,36 +10,36 @@ class TorneoTest extends FreeSpec with Matchers {
   val gronckle: Dragon = Gronckle(60, 3)
 
   val festivalDeInvierno: Torneo = Torneo(List(Combate(Some(RequisitoBarbarosidadPosta(13))), Carrera(None, 11), Pesca(None)),
-                                          List(chimuelo, nadderMortiferoRojo, gronckle),new Estandar())
+                                          List(chimuelo, nadderMortiferoRojo, gronckle))
 
   "Participacion Individual" - {
-    "patan gana el festival de invierno con regla Estandar" in {
-      assertResult(Some(patan.incrementarNivelDeHambre(16))) { //26?
-        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
+    "astrid gana el festival de invierno con regla Estandar" in {
+      assertResult(Some(astrid.incrementarNivelDeHambre(5))) {
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez), new Estandar)
       }
     }
 
     "astrid gana el festival de invierno con regla de Eliminacion" in {
-      assertResult(Some(astrid.incrementarNivelDeHambre(21))) {
-        festivalDeInvierno.setRegla(Eliminacion(1)).realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
+      assertResult(Some(astrid.incrementarNivelDeHambre(10))) {
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez), Eliminacion(1))
       }
     }
 
-    "Patapez gana el festival de invierno con regla de Torneo Inverso" in {
-      assertResult(Some(Patapez.incrementarNivelDeHambre(7.5))) {
-        festivalDeInvierno.setRegla(TorneoInverso).realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
+    "patan gana el festival de invierno con regla de Torneo Inverso" in {
+      assertResult(Some(patan.incrementarNivelDeHambre(10))) {
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez), TorneoInverso)
       }
     }
 
-    "astrid gana el festival de invierno con regla de Ban de Dragones" in {
-      assertResult(Some(astrid.incrementarNivelDeHambre(16))) {
-        festivalDeInvierno.setRegla(BanDeDragones(dragon => dragon.peso < 60)).realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
+    "patan gana el festival de invierno con regla de Ban de Dragones" in {
+      assertResult(Some(patan.incrementarNivelDeHambre(10))) {
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez), BanDeDragones(dragon => dragon.peso < 60))
       }
     }
 
-    "patan gana el festival de invierno con Handicap" in {
-      assertResult(Some(patan.incrementarNivelDeHambre(16))) {
-        festivalDeInvierno.setRegla(Handicap).realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
+    "hipo gana el festival de invierno con Handicap" in {
+      assertResult(Some(hipo.incrementarNivelDeHambre(5))) {
+        festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez), Handicap)
       }
     }
   }
@@ -48,8 +48,8 @@ class TorneoTest extends FreeSpec with Matchers {
     val astridYPatapez = Equipo(List(astrid, Patapez))
     val hipoYPatan = Equipo(List(hipo, patan))
 
-    "el equipo de hipoYPatan gana el festival de invierno por equipos con solo Patan en pie" in {
-      assertResult(Some(Equipo(List(patan.incrementarNivelDeHambre(16))))) {
+    "el equipo de astridYPatapez gana el festival de invierno por equipos con solo Astrid en pie" in {
+      assertResult(Some(Equipo(List(astrid.incrementarNivelDeHambre(5))))) {
         festivalDeInvierno.realizarTorneoPorEquipos(List(astridYPatapez, hipoYPatan))
       }
     }

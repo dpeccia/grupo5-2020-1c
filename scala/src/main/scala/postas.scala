@@ -18,9 +18,10 @@ trait Posta {
 
   def aumentarHambre(competidores: List[Competidor]): List[Competidor] = competidores.map(_.incrementarNivelDeHambre(nivelDeHambreQueIncrementa))
 
-  def realizarPosta(competidores: List[Competidor]): List[Vikingo] = {
+  def realizarPosta(competidores: List[Competidor]): Option[List[Vikingo]] = {
     val competidoresQuePuedenRealizarLaPosta = this.participantes(competidores)
-    ordenarSegunQuienEsMejor(aumentarHambre(competidoresQuePuedenRealizarLaPosta)).map(_.vikingoAsociado)
+    val vikingosOrdenados = ordenarSegunQuienEsMejor(aumentarHambre(competidoresQuePuedenRealizarLaPosta)).map(_.vikingoAsociado)
+    Option(vikingosOrdenados).filter(_.nonEmpty)
   }
 
 }

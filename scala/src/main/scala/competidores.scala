@@ -81,4 +81,5 @@ object Patapez extends Vikingo(10,10, Comestible(10), 10) {
   override def puedeParticipar(posta: Posta): Boolean = nivelDeHambre < 50
 
   override def incrementarNivelDeHambre(hambreAIncrementar: Double): Vikingo = super.incrementarNivelDeHambre(hambreAIncrementar*2)
+
 }

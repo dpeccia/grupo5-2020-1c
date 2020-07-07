@@ -63,7 +63,7 @@ class PostaTest extends FreeSpec with Matchers{
 
   "Realizar Posta" - {
     "vikingo que produce mucho danio le gana a vikingo en un combate y terminan con mas hambre" in {
-      assertResult(List(vikingoConMasDanio.incrementarNivelDeHambre(10), vikingo.incrementarNivelDeHambre(10))) {
+      assertResult(Some(List(vikingoConMasDanio.incrementarNivelDeHambre(10), vikingo.incrementarNivelDeHambre(10)))) {
         Combate(None).realizarPosta(List(vikingo, vikingoConMasDanio, vikingoConPocoDanio))
       }
     }
