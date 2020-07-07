@@ -14,7 +14,7 @@ class TorneoTest extends FreeSpec with Matchers {
 
   "Participacion Individual" - {
     "patan gana el festival de invierno con regla Estandar" in {
-      assertResult(Some(patan.incrementarNivelDeHambre(16))) {
+      assertResult(Some(patan.incrementarNivelDeHambre(26))) { //
         festivalDeInvierno.realizarTorneoIndividualmente(List(hipo, astrid, patan, Patapez))
       }
     }
