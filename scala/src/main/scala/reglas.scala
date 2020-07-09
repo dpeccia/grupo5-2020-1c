@@ -1,6 +1,6 @@
 trait Regla {
   def prepararseParaPosta(posta: Posta, participantes: List[Vikingo], dragonesDisponiblesPosta: List[Dragon]): List[Competidor]
-  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor]): Option[List[Vikingo]]
+  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor]): List[Vikingo]
   def desempatar(ganadores: List[Vikingo]): Option[Vikingo]
 }
 
@@ -16,10 +16,12 @@ class Estandar() extends Regla {
     competidores
   }
 
-  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor]): Option[List[Vikingo]] = {
+  def pasanALaSiguientePosta(posta: Posta, participantes: List[Competidor]): List[Vikingo] = {
     val ganadoresPosta = posta.realizarPosta(participantes)
-    if (ganadoresPosta.getOrElse(return None).length.equals(1)) return ganadoresPosta
-    Some(filtrarCuantosPasan(ganadoresPosta.get))
+    if (ganadoresPosta.length.equals(1)) return ganadoresPosta
+    filtrarCuantosPasan(ganadoresPosta)
+    //if (ganadoresPosta.getOrElse(return None).length.equals(1)) return ganadoresPosta
+    //Some(filtrarCuantosPasan(ganadoresPosta.get))
   }
 
   def filtrarCuantosPasan(ganadoresPosta: List[Vikingo]): List[Vikingo] = ganadoresPosta.take(ganadoresPosta.length / 2)
