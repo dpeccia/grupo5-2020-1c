@@ -1,3 +1,7 @@
-# TADP
+# Metaprogramación y Paradigma Funcional-Objetos
 
-Este repositorio tiene la estructura básica para arrancar a _darle átomos_ a la materia! :rocket:
+Este repositorio cuenta con 2 Trabajos Prácticos Grupales realizados para la materia **_Técnicas Avanzadas de Programación_** el 1er cuatrimestre del 2020
+
+* **_Metaprogramación:_** Este trabajo práctico se trata de una implementación realizada en **_Ruby_** de una composición de objetos similar a _Traits_ con su álgebra incluída, basándose en el paper **Traits: Composable Units of Behaviour**, de Schärli, Ducasse, Nierstrasz y Black. El enunciado se puede encontrar [acá](/TADP%20-%202020%20C1%20-%20TP%20Metaprogramacion%20Grupal%20-%20Traits.pdf), mientras que la resolución está hecha en la carpeta `/ruby` del repositorio
+
+* **_Paradigma Híbrido Funcional-Objetos:_** Este trabajo práctico está implementado en **_Scala_**, aplicando aspectos de los 2 paradigmas que se mencionan, para un aprovechamiento óptimo de lo que nos ofrece cada uno. Se tienen en cuenta aspectos como el uso de Inmutabilidad vs. Mutabilidad, uso de Pattern Matching vs. Polimorfismo Ad-Hoc, aprovechamiento del polimorfismo entre objetos y funciones y Orden Superior, uso adecuado del sistema de tipos, manejo de herramientas funcionales, cualidades de Software, y diseño de interfaces y elección de tipos. El enunciado se puede encontrar [acá](/TADP%20-%202020%20C1%20-%20TP%20Funcional-Objetos%20Grupal%20-%20El%20Festival%20de%20invierno.pdf), mientras que la resolución está hecha en la carpeta `/scala` del repositorio
